@@ -1,0 +1,26 @@
+{
+  "name": "athenaenv-starter-ts",
+  "version": "1.0",
+  "description": "Starter template with TypeScript and auto-reload for AthenaEnv",
+  "main": "main.js",
+  "type": "module",
+  "scripts": {
+    "build": "node ./build/build.js & tscp",
+    "run-pcsx2": "powershell.exe -noprofile -ExecutionPolicy Bypass -NoExit -File \"run.ps1\" -NoNewWindow",
+    "build-and-run": "npm run build & npm run run-pcsx2",
+    "start": "nodemon --exec \"npm run build-and-run\"",
+    "watch": "nodemon --exec \"npm run build\""
+  },
+  "author": "Wellinator",
+  "license": "MIT",
+  "devDependencies": {
+    "esbuild": "^0.24.0",
+    "esbuild-plugin-tsc": "^0.4.0",
+    "nodemon": "^3.1.7",
+    "typescript": "^5.6.2",
+    "typescript-cp": "^0.1.9"
+  },
+  "dependencies": {
+    "threejs-math": "^0.147.0"
+  }
+}
