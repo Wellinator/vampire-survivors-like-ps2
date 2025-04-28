@@ -1,0 +1,181 @@
+import { Vector2 } from "threejs-math";
+import { Clown } from "../enemies/clown";
+import { DemonDoor } from "../enemies/demon_door";
+import { Enemy, EnemyType } from "../enemies/enemy";
+import { FourEyesBug } from "../enemies/four_yeyes_bug";
+import { Ghost } from "../enemies/ghost";
+import { Homework } from "../enemies/home_work";
+import { globalPosPad } from "../fake_camera";
+import { SCREEN_VECTOR } from "../scripts/init/init-screen";
+import TextureManager from "../texture_manager";
+import { Player } from "../player";
+
+export class EnemyController {
+  private id_counter: number = 0;
+  private enemies: Enemy[] = [];
+  private TextureRepository = {
+    Clown: 0,
+    DemonDoor: 0,
+    Homework: 0,
+    FourEyesBug: 0,
+    Ghost: 0,
+  };
+
+  constructor() {
+    this.registerTextures();
+  }
+
+  get enemiesCounter(): number {
+    return this.enemies.length;
+  }
+
+  private registerTextures(): void {
+    const tm = TextureManager.getInstance<TextureManager>();
+    this.TextureRepository.Clown = tm.loadTexture(
+      "./assets/sprites/enemies/clown-spritesheet.png"
+    );
+    this.TextureRepository.DemonDoor = tm.loadTexture(
+      "./assets/sprites/enemies/demondoor-spritesheet.png"
+    );
+    this.TextureRepository.Homework = tm.loadTexture(
+      "./assets/sprites/enemies/homework-spritesheet.png"
+    );
+    this.TextureRepository.FourEyesBug = tm.loadTexture(
+      "./assets/sprites/enemies/4eyebug-spritesheet.png"
+    );
+    this.TextureRepository.Ghost = tm.loadTexture(
+      "./assets/sprites/enemies/ghost-spritesheet.png"
+    );
+  }
+
+  addEnemy(enemy: EnemyType): void {
+    let newEnemy: Enemy;
+    const spawnPos: Vector2 = this.getRandomPositionAtScreemBorder(
+      0,
+      SCREEN_VECTOR.x,
+      0,
+      SCREEN_VECTOR.y,
+      32
+    );
+    spawnPos.add(globalPosPad); // Fix spawn by camera position
+
+    switch (enemy) {
+      case EnemyType.Ghost:
+        newEnemy = new Ghost(spawnPos.x, spawnPos.y);
+        newEnemy.textureID = this.TextureRepository.Ghost;
+        break;
+      case EnemyType.Clown:
+        newEnemy = new Clown(spawnPos.x, spawnPos.y);
+        newEnemy.textureID = this.TextureRepository.Clown;
+        break;
+      case EnemyType.DemonDoor:
+        newEnemy = new DemonDoor(spawnPos.x, spawnPos.y);
+        newEnemy.textureID = this.TextureRepository.DemonDoor;
+        break;
+      case EnemyType.Homework:
+        newEnemy = new Homework(spawnPos.x, spawnPos.y);
+        newEnemy.textureID = this.TextureRepository.Homework;
+        break;
+      case EnemyType.FourEyesBug:
+        newEnemy = new FourEyesBug(spawnPos.x, spawnPos.y);
+        newEnemy.textureID = this.TextureRepository.FourEyesBug;
+        break;
+      default:
+        throw new Error(`Invalid enemy type: ${enemy}`);
+    }
+
+    newEnemy.id = this.id_counter++;
+    this.enemies.push(newEnemy);
+  }
+
+  removeEnemy(enemy: Enemy): void {
+    const index = this.enemies.findIndex((e) => e.id === enemy.id);
+    if (index > -1) {
+      this.enemies.splice(index, 1);
+    }
+  }
+
+  update(deltaTime: number): void {
+    for (let index = 0; index < this.enemies.length; index++) {
+      this.enemies[index].update(deltaTime);
+    }
+  }
+
+  fixedUpdate(fixedDeltaTime: number, player: Player): void {
+    for (let index = 0; index < this.enemies.length; index++) {
+      this.enemies[index].fixedUpdate(fixedDeltaTime, player);
+    }
+  }
+
+  render(): void {
+    for (let i = 0; i < this.enemies.length; i++) {
+      const enemy = this.enemies[i];
+
+      const shouldFlipX = enemy.direction.x == -1;
+      const currentTileX = enemy.tile_index * enemy.tileWidth;
+      const startX = currentTileX;
+      const endX = startX + enemy.tileWidth;
+      const startY = 0;
+      const endY = enemy.tileHeight;
+
+      const enemySprite =
+        TextureManager.getInstance<TextureManager>().getTexture(
+          enemy.textureID
+        );
+
+      enemySprite.startx = shouldFlipX ? endX : startX;
+      enemySprite.endx = shouldFlipX ? startX : endX;
+      enemySprite.starty = startY;
+      enemySprite.endy = endY;
+      enemySprite.width = enemy.tileWidth;
+      enemySprite.height = enemy.tileHeight;
+
+      enemySprite.draw(
+        enemy.position.x - globalPosPad.x,
+        enemy.position.y - globalPosPad.y
+      );
+    }
+  }
+
+  clearAll(): void {
+    this.enemies = [];
+  }
+
+  private getRandomPositionAtScreemBorder = (
+    minX: number,
+    maxX: number,
+    minY: number,
+    maxY: number,
+    padding: number
+  ): Vector2 => {
+    const paddedMinX = minX - padding;
+    const paddedMaxX = maxX + padding;
+    const paddedMinY = minY - padding;
+    const paddedMaxY = maxY + padding;
+
+    const side = Math.floor(Math.random() * 4); // 0: top, 1: right, 2: bottom, 3: left
+    let x = paddedMinX,
+      y = paddedMinY;
+
+    switch (side) {
+      case 0: // Top border (with padding)
+        x = Math.random() * (paddedMaxX - paddedMinX) + paddedMinX;
+        y = paddedMinY;
+        break;
+      case 1: // Right border (with padding)
+        x = paddedMaxX;
+        y = Math.random() * (paddedMaxY - paddedMinY) + paddedMinY;
+        break;
+      case 2: // Bottom border (with padding)
+        x = Math.random() * (paddedMaxX - paddedMinX) + paddedMinX;
+        y = paddedMaxY;
+        break;
+      case 3: // Left border (with padding)
+        x = paddedMinX;
+        y = Math.random() * (paddedMaxY - paddedMinY) + paddedMinY;
+        break;
+    }
+
+    return new Vector2(x, y);
+  };
+}
