@@ -1,4 +1,4 @@
-import { Vector2 } from "threejs-math";
+import { Vector2, Box2 } from "threejs-math";
 import { g_Canvas, HALF_SCREEN_VECTOR } from "./scripts/init/init-screen";
 import { g_Pad } from "./pad";
 import TextureManager from "./texture_manager";
@@ -10,21 +10,21 @@ export class Player {
 
   tile_index: number = 0;
 
-  tileWidth: number = 32;
-
-  tileHeight: number = 32;
-
   animationSpeed: number;
 
   elapsedAnimationTime: number;
 
   speed: number;
 
+  tileSize: Vector2 = new Vector2(32, 32);
+
   velocity: Vector2 = new Vector2(0, 0);
 
   direction: Vector2 = new Vector2(0, 0);
 
   position: Vector2 = new Vector2(0, 0);
+
+  hitBox: Box2 = new Box2(new Vector2(0, 0), new Vector2(0, 0));
 
   _isMooving: boolean = false;
 
@@ -69,25 +69,42 @@ export class Player {
     this.velocity.y = (deltaPadY * this.speed * fixedDeltaTime) / 1000;
 
     this.position = this.position.add(this.velocity);
+
+    this.hitBox.setFromCenterAndSize(
+      HALF_SCREEN_VECTOR,
+      this.tileSize
+    );
   }
 
   render() {
+    // const hitBoxSize = this.hitBox.getSize();
+    // Draw.rect(
+    //   this.hitBox.min.x,
+    //   this.hitBox.min.y,
+    //   hitBoxSize.x,
+    //   hitBoxSize.y,
+    //   Color.new(255, 0, 0, 128)
+    // );
+
     const shouldFlipX = this.direction.x == -1;
-    const currentTileX = this.tile_index * this.tileWidth;
+    const currentTileX = this.tile_index * this.tileSize.x;
 
     const startX = currentTileX;
-    const endX = startX + this.tileWidth;
+    const endX = startX + this.tileSize.x;
     const startY = 0;
-    const endY = this.tileHeight;
+    const endY = this.tileSize.y;
 
     this.texture_atlas.startx = shouldFlipX ? endX : startX;
     this.texture_atlas.endx = shouldFlipX ? startX : endX;
     this.texture_atlas.starty = startY;
     this.texture_atlas.endy = endY;
-    this.texture_atlas.width = this.tileWidth;
-    this.texture_atlas.height = this.tileHeight;
+    this.texture_atlas.width = this.tileSize.x;
+    this.texture_atlas.height = this.tileSize.y;
 
-    this.texture_atlas.draw(g_Canvas.width / 2, g_Canvas.height / 2);
+    this.texture_atlas.draw(
+      HALF_SCREEN_VECTOR.x - this.tileSize.x / 2,
+      HALF_SCREEN_VECTOR.y - this.tileSize.y / 2
+    );
   }
 
   isMooving() {

@@ -11,8 +11,8 @@ export class Homework extends Enemy {
     this.speed = 40;
     this.animationSpeed = 200;
 
-    this.tileWidth = 64;
-    this.tileHeight = 64;
+    this.tileSize.x = 64;
+    this.tileSize.y = 64;
   }
 
   updateSprite(): void {

@@ -111,12 +111,21 @@ export class EnemyController {
     for (let i = 0; i < this.enemies.length; i++) {
       const enemy = this.enemies[i];
 
+      // const hitBoxSize = enemy.hitBox.getSize();
+      // Draw.rect(
+      //   enemy.hitBox.min.x - globalPosPad.x,
+      //   enemy.hitBox.min.y - globalPosPad.y,
+      //   hitBoxSize.x,
+      //   hitBoxSize.y,
+      //   Color.new(255, 0, 0, 128)
+      // );
+
       const shouldFlipX = enemy.direction.x == -1;
-      const currentTileX = enemy.tile_index * enemy.tileWidth;
+      const currentTileX = enemy.tile_index * enemy.tileSize.x;
       const startX = currentTileX;
-      const endX = startX + enemy.tileWidth;
+      const endX = startX + enemy.tileSize.x;
       const startY = 0;
-      const endY = enemy.tileHeight;
+      const endY = enemy.tileSize.y;
 
       const enemySprite =
         TextureManager.getInstance<TextureManager>().getTexture(
@@ -127,12 +136,12 @@ export class EnemyController {
       enemySprite.endx = shouldFlipX ? startX : endX;
       enemySprite.starty = startY;
       enemySprite.endy = endY;
-      enemySprite.width = enemy.tileWidth;
-      enemySprite.height = enemy.tileHeight;
+      enemySprite.width = enemy.tileSize.x;
+      enemySprite.height = enemy.tileSize.y;
 
       enemySprite.draw(
-        enemy.position.x - globalPosPad.x,
-        enemy.position.y - globalPosPad.y
+        enemy.position.x - globalPosPad.x - enemy.tileSize.x / 2,
+        enemy.position.y - globalPosPad.y - enemy.tileSize.y / 2
       );
     }
   }

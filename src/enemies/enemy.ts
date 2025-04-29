@@ -1,4 +1,4 @@
-import { Vector2 } from "threejs-math";
+import { Vector2, Box2 } from "threejs-math";
 import { Player } from "../player";
 
 export enum EnemyType {
@@ -17,9 +17,7 @@ export abstract class Enemy {
 
   tile_index: number = 0;
 
-  tileWidth: number = 0;
-
-  tileHeight: number = 0;
+  tileSize: Vector2 = new Vector2(0, 0);
 
   animationSpeed: number = 500;
 
@@ -27,14 +25,13 @@ export abstract class Enemy {
 
   speed: number = 50;
 
-  /** @type {Vector2} */
   velocity: Vector2 = new Vector2(0, 0);
 
-  /** @type {Vector2} */
   direction: Vector2 = new Vector2(0, 0);
 
-  /** @type {Vector2} */
   position: Vector2 = new Vector2(0, 0);
+
+  hitBox: Box2 = new Box2(new Vector2(0, 0), new Vector2(0, 0));
 
   constructor() {
     this.elapsedAnimationTime = 0;
@@ -57,6 +54,9 @@ export abstract class Enemy {
 
     const velocity = (this.speed * fixedDeltaTime) / 1000;
     this.position.add(this.direction.clone().multiplyScalar(velocity));
+
+    // Update hitBox by new position
+    this.hitBox.setFromCenterAndSize(this.position, this.tileSize);
   }
 
   abstract updateSprite(): void;

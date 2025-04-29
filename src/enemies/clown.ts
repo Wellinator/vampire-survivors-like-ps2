@@ -11,8 +11,8 @@ export class Clown extends Enemy {
     this.speed = 25;
     this.animationSpeed = 150;
 
-    this.tileWidth = 64;
-    this.tileHeight = 64;
+    this.tileSize.x = 64;
+    this.tileSize.y = 64;
   }
 
   updateSprite(): void {
