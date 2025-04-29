@@ -11,7 +11,7 @@ export class GameplayState extends GameState {
   private level: Level = new Level1();
   private enemiesController: EnemyController = new EnemyController();
   private spawnEnemiesInterval: any;
-  private readonly max_enemies = 200;
+  private readonly max_enemies = 15;
 
   constructor() {
     super();
