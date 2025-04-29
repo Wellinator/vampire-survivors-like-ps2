@@ -3,9 +3,12 @@ import { Player } from "../player";
 import { GameState } from "./game_state.abstract";
 import { EnemyController } from "../controllers/enemy.controller";
 import { EnemyType } from "../enemies/enemy";
+import { Level1 } from "../levels/level-1";
+import { Level } from "../levels/level.abstract";
 
 export class GameplayState extends GameState {
   public player: Player; // Replace with actual player type
+  private level: Level = new Level1();
   private enemiesController: EnemyController = new EnemyController();
   private spawnEnemiesInterval: any;
   private readonly max_enemies = 200;
@@ -20,10 +23,10 @@ export class GameplayState extends GameState {
         os.clearInterval(this.spawnEnemiesInterval);
         return;
       }
-      this.spawnEnemies(3);
-    }, 1500);
+      this.spawnEnemies(1);
+    }, 1000);
 
-    // this.spawnEnemies(150);
+    // this.spawnEnemies(200);
   }
 
   get enemiesCounter(): number {
@@ -36,6 +39,9 @@ export class GameplayState extends GameState {
 
     // Update enemies
     this.enemiesController.update(deltaTime);
+
+    // Update level
+    this.level.update(deltaTime);
   }
 
   fixedUpdate(fixedDeltaTime: number): void {
@@ -45,12 +51,18 @@ export class GameplayState extends GameState {
     // Update enemies
     this.enemiesController.fixedUpdate(fixedDeltaTime, this.player);
 
-    // Make cam fallow the player
+    // Make cam  follow the player
     globalPosPad.x = this.player.position.x;
     globalPosPad.y = this.player.position.y;
+
+    // Update level
+    this.level.fixedUpdate(fixedDeltaTime);
   }
 
   render(): void {
+    // Render level
+    this.level.render();
+
     // Render player
     this.player.render();
 

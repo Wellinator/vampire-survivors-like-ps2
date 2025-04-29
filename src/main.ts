@@ -23,9 +23,9 @@ Screen.setVSync(false);
 Camera.position(0.0, 0.0, 0.0);
 Camera.type(Camera.LOOKAT);
 
-const gray = Color.new(40, 40, 40, 128);
+const grassColor = Color.new(196, 224, 83, 128);
 
-const gameTimer = new GameTimer(FrameLimits.FPS_15, FrameLimits.FPS_30);
+const gameTimer = new GameTimer(FrameLimits.FPS_30, FrameLimits.FPS_60);
 const gameState = new GameplayState();
 
 os.setInterval(() => {
@@ -41,33 +41,14 @@ os.setInterval(() => {
       gameState.fixedUpdate(fixedDeltaTime);
     },
     () => {
-      Screen.clear(gray);
-
-      // Render Stage
-      // Draw grid
-      const gridSize = 128.0;
-      const gridColor = Color.new(100, 10, 10, 128);
-
-      for (let i = -10; i < 10; i++) {
-        const x = i * gridSize;
-        for (let j = -10; j < 10; j++) {
-          const y = j * gridSize;
-          Draw.rect(
-            x - globalPosPad.x,
-            y - globalPosPad.y,
-            gridSize,
-            gridSize,
-            (i + j) & 0x01 ? gridColor : gray
-          );
-        }
-      }
+      Screen.clear(grassColor);
 
       gameState.render();
 
       // Draw debug info
       font.print(5, 5, `FPS: ${gameTimer.FPS}`);
-      font.print(5, 25, `render: ${Math.floor(gameTimer.RenderTime)}ms`);
-      font.print(5, 45, `update: ${Math.floor(gameTimer.UpdateTime)}ms`);
+      font.print(5, 25, `render: ${gameTimer.RenderTime.toFixed(2)}ms`);
+      font.print(5, 45, `update: ${gameTimer.UpdateTime.toFixed(2)}ms`);
       font.print(5, 65, `Enemies: ${gameState.enemiesCounter}`);
 
       Screen.flip();
