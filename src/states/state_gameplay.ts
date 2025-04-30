@@ -15,9 +15,6 @@ export class GameplayState extends GameState {
   private spawnEnemiesInterval: any;
   private readonly max_enemies = 100;
 
-  // Temp
-  private _collisionsCounter = 0;
-
   constructor() {
     super();
 
@@ -36,21 +33,12 @@ export class GameplayState extends GameState {
         os.clearInterval(this.spawnEnemiesInterval);
         return;
       }
-      this.spawnEnemies(1);
+      this.spawnEnemies(2);
     }, 500);
-    // this.spawnEnemies(200);
-
-    this.spawnEnemiesInterval = os.setInterval(() => {
-      this.collisionSystem.rebuild();
-    }, 5000);
   }
 
   get enemiesCounter(): number {
     return this.enemiesController.enemiesCounter;
-  }
-
-  get collisionsCounter(): number {
-    return this._collisionsCounter;
   }
 
   get objectsCount(): number {
@@ -81,7 +69,6 @@ export class GameplayState extends GameState {
       if (obj.data.nodeId == this.player.nodeId) return;
 
       // Destroy the enemy if it collides with the player
-      this._collisionsCounter++;
       const enemy = obj.data;
       this.enemiesController.removeEnemy(enemy);
     });
