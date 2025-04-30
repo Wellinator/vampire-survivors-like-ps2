@@ -120,10 +120,7 @@ export class EnemyController {
   fixedUpdate(fixedDeltaTime: number, player: Player): void {
     for (let index = 0; index < this.enemies.length; index++) {
       const enemy = this.enemies[index];
-
-      if (enemy.isAlive == false){
-        throw new Error("Enemy is dead! ID:" + enemy.id);
-      }
+      if (enemy.isAlive == false) continue;
 
       enemy.fixedUpdate(fixedDeltaTime, player);
       this.collisionSystem.update(enemy.nodeId, enemy.hitBox);
