@@ -13,7 +13,7 @@ export class GameplayState extends GameState {
   private enemiesController: EnemyController = new EnemyController();
   private collisionSystem: CollisionController;
   private spawnEnemiesInterval: any;
-  private readonly max_enemies = 10;
+  private readonly max_enemies = 100;
 
   // Temp
   private _collisionsCounter = 0;
@@ -37,7 +37,7 @@ export class GameplayState extends GameState {
         return;
       }
       this.spawnEnemies(1);
-    }, 2000);
+    }, 500);
     // this.spawnEnemies(200);
 
     this.spawnEnemiesInterval = os.setInterval(() => {
@@ -72,31 +72,19 @@ export class GameplayState extends GameState {
     // Update player
     this.player.fixedUpdate(fixedDeltaTime);
     this.collisionSystem.update(this.player.nodeId, this.player.hitBox);
-    // const playerAABB = this.collisionSystem.get(this.player.nodeId);
-    // console.log(
-    //   `Player AABB. Center: ${playerAABB?.aabb.getCenter().x}, ${
-    //     playerAABB?.aabb.getCenter().y
-    //   } | size: ${playerAABB?.aabb.getSize().x}, ${
-    //     playerAABB?.aabb.getSize().y
-    //   }`
-    // );
 
     // Update enemies
     this.enemiesController.fixedUpdate(fixedDeltaTime, this.player);
 
     // Check collisions
-    // this.collisionSystem.query(this.player.hitBox, (obj) => {
-    //   if (obj.data.nodeId == this.player.nodeId) return;
+    this.collisionSystem.query(this.player.hitBox, (obj) => {
+      if (obj.data.nodeId == this.player.nodeId) return;
 
-    //   // Destroy the enemy if it collides with the player
-    //   console.log(
-    //     "Collision with player detected! Removing enemy with id: ",
-    //     obj.data.nodeId
-    //   );
-    //   this._collisionsCounter++;
-    //   const enemy = obj.data;
-    //   this.enemiesController.removeEnemy(enemy);
-    // });
+      // Destroy the enemy if it collides with the player
+      this._collisionsCounter++;
+      const enemy = obj.data;
+      this.enemiesController.removeEnemy(enemy);
+    });
 
     // Make cam  follow the player
     g_Camera.setPosition(this.player.position);
