@@ -1,6 +1,5 @@
 // {"name": "Athena develop environment", "author": "Wellinator", "version": "04072023", "icon": "render_icon.png", "file": "3dcollision.js"}
 
-import { globalPosPad } from "./fake_camera";
 import { g_Pad } from "./pad";
 import { font } from "./scripts/init/init-font";
 import { SetupRender } from "./scripts/init/init-render";
@@ -49,7 +48,8 @@ os.setInterval(() => {
       font.print(5, 5, `FPS: ${gameTimer.FPS}`);
       font.print(5, 25, `render: ${gameTimer.RenderTime.toFixed(2)}ms`);
       font.print(5, 45, `update: ${gameTimer.UpdateTime.toFixed(2)}ms`);
-      font.print(5, 65, `Enemies: ${gameState.enemiesCounter}`);
+      font.print(5, 65, `Objects: ${gameState.objectsCount}`);
+      font.print(5, 85, `Collisions: ${gameState.collisionsCounter}`);
 
       Screen.flip();
     }

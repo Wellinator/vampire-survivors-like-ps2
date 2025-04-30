@@ -13,6 +13,10 @@ export enum EnemyType {
 export abstract class Enemy {
   id: number = 0;
 
+  nodeId: number = 0;
+
+  isAlive: boolean = false;
+
   textureID: number = 0;
 
   tile_index: number = 0;
@@ -35,6 +39,7 @@ export abstract class Enemy {
 
   constructor() {
     this.elapsedAnimationTime = 0;
+    this.isAlive = true;
   }
 
   update(deltaTime: number) {}
@@ -47,10 +52,7 @@ export abstract class Enemy {
     }
 
     // Set enemy direction by player
-    this.direction = player
-      .getCenteredPosition()
-      .sub(this.position)
-      .normalize();
+    this.direction = player.position.clone().sub(this.position).normalize();
 
     const velocity = (this.speed * fixedDeltaTime) / 1000;
     this.position.add(this.direction.clone().multiplyScalar(velocity));

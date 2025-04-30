@@ -1,10 +1,12 @@
 import { Vector2, Box2 } from "threejs-math";
-import { g_Canvas, HALF_SCREEN_VECTOR } from "./scripts/init/init-screen";
 import { g_Pad } from "./pad";
 import TextureManager from "./texture_manager";
+import { g_Camera } from "./camera";
 
 export class Player {
   texture_atlas!: Image;
+
+  nodeId: number = 0;
 
   textureId: number = 0;
 
@@ -29,9 +31,9 @@ export class Player {
   _isMooving: boolean = false;
 
   constructor() {
-    this.speed = 65;
+    this.speed = 150;
     this.elapsedAnimationTime = 0;
-    this.animationSpeed = 100;
+    this.animationSpeed = 80;
 
     const tm = TextureManager.getInstance<TextureManager>();
     this.textureId = tm.loadTexture(
@@ -69,20 +71,15 @@ export class Player {
     this.velocity.y = (deltaPadY * this.speed * fixedDeltaTime) / 1000;
 
     this.position = this.position.add(this.velocity);
-
-    this.hitBox.setFromCenterAndSize(
-      HALF_SCREEN_VECTOR,
-      this.tileSize
-    );
+    this.hitBox.setFromCenterAndSize(this.position.clone(), this.tileSize);
   }
 
   render() {
-    // const hitBoxSize = this.hitBox.getSize();
     // Draw.rect(
     //   this.hitBox.min.x,
     //   this.hitBox.min.y,
-    //   hitBoxSize.x,
-    //   hitBoxSize.y,
+    //   this.tileSize.x,
+    //   this.tileSize.y,
     //   Color.new(255, 0, 0, 128)
     // );
 
@@ -101,10 +98,8 @@ export class Player {
     this.texture_atlas.width = this.tileSize.x;
     this.texture_atlas.height = this.tileSize.y;
 
-    this.texture_atlas.draw(
-      HALF_SCREEN_VECTOR.x - this.tileSize.x / 2,
-      HALF_SCREEN_VECTOR.y - this.tileSize.y / 2
-    );
+    const pos = g_Camera.toScreenSpace(this.position);
+    this.texture_atlas.draw(pos.x, pos.y);
   }
 
   isMooving() {
@@ -134,9 +129,5 @@ export class Player {
 
   setRunning() {
     this._isMooving = true;
-  }
-
-  getCenteredPosition(): Vector2 {
-    return this.position.clone().add(HALF_SCREEN_VECTOR);
   }
 }

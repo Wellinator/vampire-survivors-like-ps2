@@ -1,18 +1,20 @@
-import { Vector2 } from "threejs-math";
+import { Vector2, Box2 } from "threejs-math";
 import { Clown } from "../enemies/clown";
 import { DemonDoor } from "../enemies/demon_door";
 import { Enemy, EnemyType } from "../enemies/enemy";
 import { FourEyesBug } from "../enemies/four_yeyes_bug";
 import { Ghost } from "../enemies/ghost";
 import { Homework } from "../enemies/home_work";
-import { globalPosPad } from "../fake_camera";
-import { SCREEN_VECTOR } from "../scripts/init/init-screen";
+import { g_Camera } from "../camera";
+import { HALF_SCREEN_VECTOR, SCREEN_VECTOR } from "../scripts/init/init-screen";
 import TextureManager from "../texture_manager";
 import { Player } from "../player";
+import { CollisionController } from "./collision.controller";
 
 export class EnemyController {
-  private id_counter: number = 0;
+  private id_counter: number = 1;
   private enemies: Enemy[] = [];
+  private collisionSystem: CollisionController;
   private TextureRepository = {
     Clown: 0,
     DemonDoor: 0,
@@ -22,6 +24,8 @@ export class EnemyController {
   };
 
   constructor() {
+    this.collisionSystem =
+      CollisionController.getInstance<CollisionController>();
     this.registerTextures();
   }
 
@@ -48,7 +52,7 @@ export class EnemyController {
     );
   }
 
-  addEnemy(enemy: EnemyType): void {
+  addEnemy(enemy: EnemyType): Enemy {
     let newEnemy: Enemy;
     const spawnPos: Vector2 = this.getRandomPositionAtScreemBorder(
       0,
@@ -57,7 +61,7 @@ export class EnemyController {
       SCREEN_VECTOR.y,
       32
     );
-    spawnPos.add(globalPosPad); // Fix spawn by camera position
+    spawnPos.add(g_Camera.getPosition()); // Fix spawn by camera position
 
     switch (enemy) {
       case EnemyType.Ghost:
@@ -86,11 +90,20 @@ export class EnemyController {
 
     newEnemy.id = this.id_counter++;
     this.enemies.push(newEnemy);
+
+    newEnemy.nodeId = this.collisionSystem.insert({
+      aabb: newEnemy.hitBox,
+      data: { id: newEnemy.id },
+    });
+
+    return newEnemy;
   }
 
   removeEnemy(enemy: Enemy): void {
     const index = this.enemies.findIndex((e) => e.id === enemy.id);
     if (index > -1) {
+      enemy.isAlive = false;
+      this.collisionSystem.remove(enemy.nodeId);
       this.enemies.splice(index, 1);
     }
   }
@@ -103,20 +116,30 @@ export class EnemyController {
 
   fixedUpdate(fixedDeltaTime: number, player: Player): void {
     for (let index = 0; index < this.enemies.length; index++) {
-      this.enemies[index].fixedUpdate(fixedDeltaTime, player);
+      const enemy = this.enemies[index];
+      enemy.fixedUpdate(fixedDeltaTime, player);
+      this.collisionSystem.update(enemy.nodeId, enemy.hitBox);
     }
   }
 
   render(): void {
-    for (let i = 0; i < this.enemies.length; i++) {
-      const enemy = this.enemies[i];
+    const screenBox2 = g_Camera.getHitBox();
 
-      // const hitBoxSize = enemy.hitBox.getSize();
+    // Broad phase collision detection
+    this.collisionSystem.query(screenBox2, (obj) => {
+      const enemyId: number = obj.data?.id;
+
+      const enemy = this.enemies.find((e) => e.id == enemyId);
+      if (!enemy || !enemy.id || !enemy.isAlive) return; // Skip player collision or dead enemies
+
+      // Narrow phase collision detection
+      if (!enemy.hitBox.intersectsBox(screenBox2)) return;
+
       // Draw.rect(
       //   enemy.hitBox.min.x - globalPosPad.x,
       //   enemy.hitBox.min.y - globalPosPad.y,
-      //   hitBoxSize.x,
-      //   hitBoxSize.y,
+      //   enemy.tileSize.x,
+      //   enemy.tileSize.y,
       //   Color.new(255, 0, 0, 128)
       // );
 
@@ -139,11 +162,17 @@ export class EnemyController {
       enemySprite.width = enemy.tileSize.x;
       enemySprite.height = enemy.tileSize.y;
 
-      enemySprite.draw(
-        enemy.position.x - globalPosPad.x - enemy.tileSize.x / 2,
-        enemy.position.y - globalPosPad.y - enemy.tileSize.y / 2
-      );
-    }
+      const position = g_Camera.toScreenSpace(enemy.position);
+      enemySprite.draw(position.x, position.y);
+    });
+
+    // Draw.rect(
+    //   min.x - globalPosPad.x,
+    //   min.y - globalPosPad.y,
+    //   max.x - min.x,
+    //   max.y - min.y,
+    //   Color.new(200, 200, 200, 64)
+    // );
   }
 
   clearAll(): void {

@@ -1,4 +1,5 @@
-import { globalPosPad } from "../fake_camera";
+import { Vector2 } from "threejs-math";
+import { g_Camera } from "../camera";
 import TextureManager from "../texture_manager";
 import { Level } from "./level.abstract";
 
@@ -17,7 +18,9 @@ export class Level1 extends Level {
     this.levelHeight = 2500;
 
     const textureManager = TextureManager.getInstance<TextureManager>();
-    this.levelBackgroundTexId = textureManager.loadTexture("./assets/sprites/levels/level-1/background.png");
+    this.levelBackgroundTexId = textureManager.loadTexture(
+      "./assets/sprites/levels/level-1/background.png"
+    );
     const backGround = TextureManager.getInstance<TextureManager>().getTexture(
       this.levelBackgroundTexId
     );
@@ -29,10 +32,10 @@ export class Level1 extends Level {
     const backGround = TextureManager.getInstance<TextureManager>().getTexture(
       this.levelBackgroundTexId
     );
-    backGround.draw(
-      -(this.levelWidth / 2) - globalPosPad.x,
-      -(this.levelHeight / 2) - globalPosPad.y
-    );
+
+    const origin = new Vector2(-(this.levelWidth / 2), -(this.levelHeight / 2));
+    const position = g_Camera.toScreenSpace(origin);
+    backGround.draw(position.x, position.y);
   }
 
   public update(deltaTime: number): void {}
