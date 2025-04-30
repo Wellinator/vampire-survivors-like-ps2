@@ -99,8 +99,6 @@ export class EnemyController {
       data: newEnemy,
     });
 
-    console.log("Enemy added: ", newEnemy.id);
-
     return newEnemy;
   }
 
@@ -122,6 +120,11 @@ export class EnemyController {
   fixedUpdate(fixedDeltaTime: number, player: Player): void {
     for (let index = 0; index < this.enemies.length; index++) {
       const enemy = this.enemies[index];
+
+      if (enemy.isAlive == false){
+        throw new Error("Enemy is dead! ID:" + enemy.id);
+      }
+
       enemy.fixedUpdate(fixedDeltaTime, player);
       this.collisionSystem.update(enemy.nodeId, enemy.hitBox);
     }
