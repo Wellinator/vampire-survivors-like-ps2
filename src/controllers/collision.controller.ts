@@ -135,7 +135,7 @@ export class CollisionController extends Singleton {
     this.nodes.clear();
     this.nextId = 1;
     for (const obj of objects) {
-      this.insert(obj);
+      obj.data.nodeId = this.insert(obj);
     }
   }
 
