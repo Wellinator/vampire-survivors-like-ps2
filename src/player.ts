@@ -100,7 +100,9 @@ export class Player {
     this.texture_atlas.width = this.tileSize.x;
     this.texture_atlas.height = this.tileSize.y;
 
-    const pos = g_Camera.toScreenSpace(this.position);
+    const pos = g_Camera
+      .toScreenSpace(this.position) // Convert to screen space
+      .sub(this.tileSize.clone().divideScalar(2)); // Center the sprite
     this.texture_atlas.draw(pos.x, pos.y);
   }
 
