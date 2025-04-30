@@ -13,6 +13,9 @@ export class FourEyesBug extends Enemy {
 
     this.tileSize.x = 64;
     this.tileSize.y = 64;
+
+    this.hitboxSize.x = 40;
+    this.hitboxSize.y = 30;
   }
 
   updateSprite() {

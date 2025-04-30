@@ -13,6 +13,9 @@ export class Clown extends Enemy {
 
     this.tileSize.x = 64;
     this.tileSize.y = 64;
+
+    this.hitboxSize.x = 20;
+    this.hitboxSize.y = 40;
   }
 
   updateSprite(): void {

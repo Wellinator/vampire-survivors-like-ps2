@@ -13,6 +13,9 @@ export class Ghost extends Enemy {
 
     this.tileSize.x = 64;
     this.tileSize.y = 64;
+
+    this.hitboxSize.x = 28;
+    this.hitboxSize.y = 35;
   }
 
   updateSprite(): void {

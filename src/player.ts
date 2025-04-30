@@ -4,29 +4,20 @@ import TextureManager from "./texture_manager";
 import { g_Camera } from "./camera";
 
 export class Player {
-  readonly id: number = 1;
+  public readonly id: number = 1;
+  public readonly tileSize: Vector2 = new Vector2(32, 32);
+  public readonly hitboxSize: Vector2 = new Vector2(20, 32);
 
-  nodeId: number = -1;
-
-  textureId: number = -1;
-
-  texture_atlas!: Image;
-
-  tile_index: number = 0;
-
-  animationSpeed: number;
-
-  elapsedAnimationTime: number;
-
-  speed: number;
-
-  tileSize: Vector2 = new Vector2(32, 32);
-
-  velocity: Vector2 = new Vector2(0, 0);
-
-  direction: Vector2 = new Vector2(0, 0);
-
-  position: Vector2 = new Vector2(0, 0);
+  public nodeId: number = -1;
+  public textureId: number = -1;
+  public texture_atlas!: Image;
+  public tile_index: number = 0;
+  public animationSpeed: number;
+  public elapsedAnimationTime: number;
+  public speed: number;
+  public velocity: Vector2 = new Vector2(0, 0);
+  public direction: Vector2 = new Vector2(0, 0);
+  public position: Vector2 = new Vector2(0, 0);
 
   hitBox: Box2 = new Box2(new Vector2(0, 0), new Vector2(0, 0));
 
@@ -73,18 +64,10 @@ export class Player {
     this.velocity.y = (deltaPadY * this.speed * fixedDeltaTime) / 1000;
 
     this.position = this.position.add(this.velocity);
-    this.hitBox.setFromCenterAndSize(this.position.clone(), this.tileSize);
+    this.hitBox.setFromCenterAndSize(this.position.clone(), this.hitboxSize);
   }
 
   render() {
-    // Draw.rect(
-    //   this.hitBox.min.x,
-    //   this.hitBox.min.y,
-    //   this.tileSize.x,
-    //   this.tileSize.y,
-    //   Color.new(255, 0, 0, 128)
-    // );
-
     const shouldFlipX = this.direction.x == -1;
     const currentTileX = this.tile_index * this.tileSize.x;
 
@@ -104,6 +87,17 @@ export class Player {
       .toScreenSpace(this.position) // Convert to screen space
       .sub(this.tileSize.clone().divideScalar(2)); // Center the sprite
     this.texture_atlas.draw(pos.x, pos.y);
+  }
+
+  renderHitBox() {
+    const pos = g_Camera.toScreenSpace(this.hitBox.min.clone()); // Convert to screen space
+    Draw.rect(
+      pos.x,
+      pos.y,
+      this.hitboxSize.x,
+      this.hitboxSize.y,
+      Color.new(255, 0, 0, 128)
+    );
   }
 
   isMooving() {

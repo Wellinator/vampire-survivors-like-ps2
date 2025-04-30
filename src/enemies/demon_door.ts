@@ -13,6 +13,9 @@ export class DemonDoor extends Enemy {
 
     this.tileSize.x = 64;
     this.tileSize.y = 64;
+
+    this.hitboxSize.x = 42;
+    this.hitboxSize.y = 43;
   }
 
   updateSprite(): void {
