@@ -1,11 +1,11 @@
 import { Vector2, Box2 } from "threejs-math";
-import { g_Canvas, SCREEN_VECTOR } from "./scripts/init/init-screen";
+import { HALF_SCREEN_VECTOR, SCREEN_VECTOR } from "./scripts/init/init-screen";
 
 class Camera {
   private position: Vector2 = new Vector2(0, 0);
   public readonly screenOffset: Vector2 = new Vector2(
-    g_Canvas.width / 2,
-    g_Canvas.height / 2
+    HALF_SCREEN_VECTOR.x,
+    HALF_SCREEN_VECTOR.y
   );
 
   public setPosition(position: Vector2): void {
@@ -22,6 +22,10 @@ class Camera {
 
   public toScreenSpace(worldPos: Vector2): Vector2 {
     return worldPos.clone().sub(this.position).add(this.screenOffset);
+  }
+
+  public toWorldSpace(screenPos: Vector2): Vector2 {
+    return screenPos.clone().sub(this.screenOffset).add(this.position);
   }
 }
 

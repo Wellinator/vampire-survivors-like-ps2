@@ -11,9 +11,9 @@ export enum EnemyType {
 }
 
 export abstract class Enemy {
-  id: number = 0;
+  id: number = -1;
 
-  nodeId: number = 0;
+  nodeId: number = -1;
 
   isAlive: boolean = false;
 

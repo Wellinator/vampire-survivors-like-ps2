@@ -13,7 +13,7 @@ export class GameplayState extends GameState {
   private enemiesController: EnemyController = new EnemyController();
   private collisionSystem: CollisionController;
   private spawnEnemiesInterval: any;
-  private readonly max_enemies = 1;
+  private readonly max_enemies = 10;
 
   // Temp
   private _collisionsCounter = 0;
@@ -27,7 +27,7 @@ export class GameplayState extends GameState {
     this.player = new Player(); // Initialize player
     this.player.nodeId = this.collisionSystem.insert({
       aabb: this.player.hitBox,
-      data: { nodeId: this.player.nodeId },
+      data: this.player,
     });
 
     // TODO: move to stageHandler in the level class
@@ -37,7 +37,7 @@ export class GameplayState extends GameState {
         return;
       }
       this.spawnEnemies(1);
-    }, 1000);
+    }, 2000);
     // this.spawnEnemies(200);
 
     this.spawnEnemiesInterval = os.setInterval(() => {
@@ -85,15 +85,18 @@ export class GameplayState extends GameState {
     this.enemiesController.fixedUpdate(fixedDeltaTime, this.player);
 
     // Check collisions
-    this.collisionSystem.query(this.player.hitBox, (obj) => {
-      if (obj.data.nodeId == this.player.nodeId) return;
+    // this.collisionSystem.query(this.player.hitBox, (obj) => {
+    //   if (obj.data.nodeId == this.player.nodeId) return;
 
-      // Destroy the enemy if it collides with the player
-      console.log("Collision with player detected! Removing enemy.");
-      this._collisionsCounter++;
-      const enemy: Enemy = obj.data;
-      this.enemiesController.removeEnemy(enemy);
-    });
+    //   // Destroy the enemy if it collides with the player
+    //   console.log(
+    //     "Collision with player detected! Removing enemy with id: ",
+    //     obj.data.nodeId
+    //   );
+    //   this._collisionsCounter++;
+    //   const enemy = obj.data;
+    //   this.enemiesController.removeEnemy(enemy);
+    // });
 
     // Make cam  follow the player
     g_Camera.setPosition(this.player.position);

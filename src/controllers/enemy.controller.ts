@@ -1,4 +1,4 @@
-import { Vector2, Box2 } from "threejs-math";
+import { Vector2 } from "threejs-math";
 import { Clown } from "../enemies/clown";
 import { DemonDoor } from "../enemies/demon_door";
 import { Enemy, EnemyType } from "../enemies/enemy";
@@ -54,14 +54,17 @@ export class EnemyController {
 
   addEnemy(enemy: EnemyType): Enemy {
     let newEnemy: Enemy;
-    const spawnPos: Vector2 = this.getRandomPositionAtScreemBorder(
+
+    const spawnPosScreenSpace: Vector2 = this.getRandomPositionAtScreemBorder(
       0,
       SCREEN_VECTOR.x,
       0,
       SCREEN_VECTOR.y,
       32
     );
-    spawnPos.add(g_Camera.getPosition()); // Fix spawn by camera position
+
+    const spawnPos = g_Camera.toWorldSpace(spawnPosScreenSpace); // Convert to world space
+    console.log(`Spawn position: ${spawnPos.x}, ${spawnPos.y}`);
 
     switch (enemy) {
       case EnemyType.Ghost:
@@ -93,8 +96,10 @@ export class EnemyController {
 
     newEnemy.nodeId = this.collisionSystem.insert({
       aabb: newEnemy.hitBox,
-      data: { id: newEnemy.id },
+      data: newEnemy,
     });
+
+    console.log("Enemy added: ", newEnemy.id);
 
     return newEnemy;
   }
@@ -125,15 +130,14 @@ export class EnemyController {
   render(): void {
     const screenBox2 = g_Camera.getHitBox();
 
-    // Broad phase collision detection
-    this.collisionSystem.query(screenBox2, (obj) => {
-      const enemyId: number = obj.data?.id;
+    for (let i = 0; i < this.enemies.length; i++) {
+      const enemy = this.enemies[i];
 
-      const enemy = this.enemies.find((e) => e.id == enemyId);
-      if (!enemy || !enemy.id || !enemy.isAlive) return; // Skip player collision or dead enemies
+      // const enemy = this.enemies.find((e) => e.id == enemyId);
+      // if (!enemy || !enemy.id || !enemy.isAlive) return; // Skip player collision or dead enemies
 
       // Narrow phase collision detection
-      if (!enemy.hitBox.intersectsBox(screenBox2)) return;
+      // if (!enemy.hitBox.intersectsBox(screenBox2)) return;
 
       // Draw.rect(
       //   enemy.hitBox.min.x - globalPosPad.x,
@@ -162,9 +166,17 @@ export class EnemyController {
       enemySprite.width = enemy.tileSize.x;
       enemySprite.height = enemy.tileSize.y;
 
-      const position = g_Camera.toScreenSpace(enemy.position);
+      const position = g_Camera
+        .toScreenSpace(enemy.position) // Convert to screen space
+        .sub(enemy.tileSize.clone().divideScalar(2)); // Center the sprite
+
       enemySprite.draw(position.x, position.y);
-    });
+    }
+
+    // // Broad phase collision detection
+    // this.collisionSystem.query(screenBox2, (obj) => {
+    //   const enemyId: number = obj.data?.id;
+    // });
 
     // Draw.rect(
     //   min.x - globalPosPad.x,

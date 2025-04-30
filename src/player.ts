@@ -4,11 +4,13 @@ import TextureManager from "./texture_manager";
 import { g_Camera } from "./camera";
 
 export class Player {
+  readonly id: number = 1;
+
+  nodeId: number = -1;
+
+  textureId: number = -1;
+
   texture_atlas!: Image;
-
-  nodeId: number = 0;
-
-  textureId: number = 0;
 
   tile_index: number = 0;
 
