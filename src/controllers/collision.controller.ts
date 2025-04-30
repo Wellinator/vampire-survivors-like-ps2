@@ -34,8 +34,8 @@ export class CollisionController extends Singleton {
   private nextId = 1;
 
   // Optimization configs
-  fatAABBMargin = 5;
-  updateThreshold = 0.5;
+  fatAABBMargin = 15;
+  updateThreshold = 10;
 
   // Temporary reused AABBs for performance
   private tmpBox1 = new Box2();
@@ -94,8 +94,9 @@ export class CollisionController extends Singleton {
     if (
       deltaArea < this.updateThreshold &&
       deltaPosition < this.updateThreshold
-    )
+    ) {
       return true;
+    }
 
     this.removeNode(node);
     node.aabb.copy(newAABB);
