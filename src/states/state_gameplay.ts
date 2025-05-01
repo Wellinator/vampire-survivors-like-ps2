@@ -8,6 +8,7 @@ import {
   Collidable,
   CollisionController,
 } from "../controllers/collision.controller";
+import { EnemyType } from "../enemies/enemy";
 
 export class GameplayState extends GameState {
   public player: Player; // Replace with actual player type
@@ -91,7 +92,7 @@ export class GameplayState extends GameState {
   // TODO: spawn types and quantity by elapsed time
   spawnEnemies(quantity: number) {
     for (let i = 0; i < quantity; i++) {
-      const enemyTipe = Math.floor(Math.random() * 1);
+      const enemyTipe = Math.floor(Math.random() * EnemyType.MaxEnemy);
       this.enemiesController.addEnemy(enemyTipe);
     }
   }
