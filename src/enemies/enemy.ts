@@ -15,7 +15,6 @@ export enum EnemyType {
 export abstract class Enemy implements Indexable {
   public id: number = -1;
   public nodeId: number = -1;
-  public isAlive: boolean = false;
   public textureID: number = 0;
   public tile_index: number = 0;
   public tileSize: Vector2 = new Vector2(0, 0);
@@ -30,7 +29,6 @@ export abstract class Enemy implements Indexable {
 
   constructor() {
     this.elapsedAnimationTime = 0;
-    this.isAlive = true;
   }
 
   qtIndex(node: NodeGeometry): number[] {

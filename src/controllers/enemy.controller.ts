@@ -97,26 +97,23 @@ export class EnemyController {
   }
 
   removeEnemy(enemy: Enemy): void {
-    const index = this.enemies.findIndex((e) => e.id === enemy.id);
-    if (index > -1) {
+    const i = this.enemies.findIndex((e) => e.id === enemy.id);
+    if (i > -1) {
       enemy.isAlive = false;
-      this.enemies.splice(index, 1);
+      this.enemies.splice(i, 1);
     }
   }
 
   update(deltaTime: number): void {
-    for (let index = 0; index < this.enemies.length; index++) {
-      this.enemies[index].update(deltaTime);
+    for (let i = 0; i < this.enemies.length; i++) {
+      this.enemies[i].update(deltaTime);
     }
   }
 
   fixedUpdate(fixedDeltaTime: number, player: Player): void {
-    for (let index = 0; index < this.enemies.length; index++) {
-      const enemy = this.enemies[index];
-      if (enemy.isAlive == false) continue;
-
-      enemy.fixedUpdate(fixedDeltaTime, player);
-      this.collisionSystem.insert(enemy);
+    for (let i = 0; i < this.enemies.length; i++) {
+      this.enemies[i].fixedUpdate(fixedDeltaTime, player);
+      this.collisionSystem.insert(this.enemies[i]);
     }
   }
 
