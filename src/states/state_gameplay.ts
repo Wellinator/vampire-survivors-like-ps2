@@ -25,10 +25,7 @@ export class GameplayState extends GameState {
 
     // TODO: move to stageHandler in the level class
     this.spawnEnemiesInterval = os.setInterval(() => {
-      if (this.enemiesController.enemiesCounter >= this.max_enemies) {
-        os.clearInterval(this.spawnEnemiesInterval);
-        return;
-      }
+      if (this.enemiesController.enemiesCounter >= this.max_enemies) return;
       this.spawnEnemies(2);
     }, 500);
   }

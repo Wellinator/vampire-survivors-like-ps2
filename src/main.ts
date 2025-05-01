@@ -24,7 +24,7 @@ Camera.type(Camera.LOOKAT);
 
 const grassColor = Color.new(196, 224, 83, 128);
 
-const gameTimer = new GameTimer(FrameLimits.FPS_30, FrameLimits.FPS_60);
+const gameTimer = new GameTimer(FrameLimits.FPS_15, FrameLimits.FPS_30);
 const gameState = new GameplayState();
 
 os.setInterval(() => {
@@ -45,7 +45,7 @@ os.setInterval(() => {
       gameState.render();
 
       // Draw debug info
-      font.print(5, 5, `FPS: ${gameTimer.FPS}`);
+      font.print(5, 5, `FPS: ${gameTimer.FPS} (${Screen.getFPS(10)})`);
       font.print(5, 25, `render: ${gameTimer.RenderTime.toFixed(2)}ms`);
       font.print(5, 45, `update: ${gameTimer.UpdateTime.toFixed(2)}ms`);
       font.print(5, 65, `Objects: ${gameState.objectsCount}`);
