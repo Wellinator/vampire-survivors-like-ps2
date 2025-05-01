@@ -6,7 +6,7 @@ import { FourEyesBug } from "../enemies/four_yeyes_bug";
 import { Ghost } from "../enemies/ghost";
 import { Homework } from "../enemies/home_work";
 import { g_Camera } from "../camera";
-import { HALF_SCREEN_VECTOR, SCREEN_VECTOR } from "../scripts/init/init-screen";
+import { SCREEN_VECTOR } from "../scripts/init/init-screen";
 import TextureManager from "../texture_manager";
 import { Player } from "../player";
 import { CollisionController } from "./collision.controller";
@@ -64,7 +64,6 @@ export class EnemyController {
     );
 
     const spawnPos = g_Camera.toWorldSpace(spawnPosScreenSpace); // Convert to world space
-    console.log(`Spawn position: ${spawnPos.x}, ${spawnPos.y}`);
 
     switch (enemy) {
       case EnemyType.Ghost:
@@ -94,11 +93,6 @@ export class EnemyController {
     newEnemy.id = this.id_counter++;
     this.enemies.push(newEnemy);
 
-    newEnemy.nodeId = this.collisionSystem.insert({
-      aabb: newEnemy.hitBox,
-      data: newEnemy,
-    });
-
     return newEnemy;
   }
 
@@ -106,7 +100,6 @@ export class EnemyController {
     const index = this.enemies.findIndex((e) => e.id === enemy.id);
     if (index > -1) {
       enemy.isAlive = false;
-      this.collisionSystem.remove(enemy.nodeId);
       this.enemies.splice(index, 1);
     }
   }
@@ -123,7 +116,7 @@ export class EnemyController {
       if (enemy.isAlive == false) continue;
 
       enemy.fixedUpdate(fixedDeltaTime, player);
-      this.collisionSystem.update(enemy.nodeId, enemy.hitBox);
+      this.collisionSystem.insert(enemy);
     }
   }
 

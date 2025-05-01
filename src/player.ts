@@ -2,8 +2,9 @@ import { Vector2, Box2 } from "threejs-math";
 import { g_Pad } from "./pad";
 import TextureManager from "./texture_manager";
 import { g_Camera } from "./camera";
+import { Rectangle, Indexable, NodeGeometry } from "@timohausmann/quadtree-ts";
 
-export class Player {
+export class Player implements Indexable {
   public readonly id: number = 1;
   public readonly tileSize: Vector2 = new Vector2(32, 32);
   public readonly hitboxSize: Vector2 = new Vector2(20, 32);
@@ -33,6 +34,21 @@ export class Player {
       "./assets/sprites/player/kid-male-spritesheet.png"
     );
     this.texture_atlas = tm.getTexture(this.textureId);
+  }
+
+  qtIndex(node: NodeGeometry): number[] {
+    // The Box should act like a Rectangle
+    // so we just call qtIndex on the Rectangle prototype
+    // and map the position and size vectors to x, y, width and height
+    return Rectangle.prototype.qtIndex.call(
+      {
+        x: this.position.x,
+        y: this.position.y,
+        width: this.hitboxSize.x,
+        height: this.hitboxSize.y,
+      },
+      node
+    );
   }
 
   update(deltaTime: number) {

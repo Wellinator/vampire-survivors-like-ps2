@@ -1,6 +1,7 @@
 import { Vector2, Box2 } from "threejs-math";
 import { Player } from "../player";
 import { g_Camera } from "../camera";
+import { Indexable, NodeGeometry, Rectangle } from "@timohausmann/quadtree-ts";
 
 export enum EnemyType {
   Clown,
@@ -11,7 +12,7 @@ export enum EnemyType {
   MaxEnemy,
 }
 
-export abstract class Enemy {
+export abstract class Enemy implements Indexable {
   public id: number = -1;
   public nodeId: number = -1;
   public isAlive: boolean = false;
@@ -30,6 +31,21 @@ export abstract class Enemy {
   constructor() {
     this.elapsedAnimationTime = 0;
     this.isAlive = true;
+  }
+
+  qtIndex(node: NodeGeometry): number[] {
+    // The Box should act like a Rectangle
+    // so we just call qtIndex on the Rectangle prototype
+    // and map the position and size vectors to x, y, width and height
+    return Rectangle.prototype.qtIndex.call(
+      {
+        x: this.position.x,
+        y: this.position.y,
+        width: this.hitboxSize.x,
+        height: this.hitboxSize.y,
+      },
+      node
+    );
   }
 
   abstract updateSprite(): void;

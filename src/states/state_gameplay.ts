@@ -2,10 +2,12 @@ import { g_Camera } from "../camera";
 import { Player } from "../player";
 import { GameState } from "./game_state.abstract";
 import { EnemyController } from "../controllers/enemy.controller";
-import { Enemy, EnemyType } from "../enemies/enemy";
 import { Level1 } from "../levels/level-1";
 import { Level } from "../levels/level.abstract";
-import { CollisionController } from "../controllers/collision.controller";
+import {
+  Collidable,
+  CollisionController,
+} from "../controllers/collision.controller";
 
 export class GameplayState extends GameState {
   public player: Player; // Replace with actual player type
@@ -17,15 +19,8 @@ export class GameplayState extends GameState {
 
   constructor() {
     super();
-
-    this.collisionSystem =
-      CollisionController.getInstance<CollisionController>();
-
-    this.player = new Player(); // Initialize player
-    this.player.nodeId = this.collisionSystem.insert({
-      aabb: this.player.hitBox,
-      data: this.player,
-    });
+    this.collisionSystem = CollisionController.getInstance();
+    this.player = new Player();
 
     // TODO: move to stageHandler in the level class
     this.spawnEnemiesInterval = os.setInterval(() => {
@@ -42,7 +37,7 @@ export class GameplayState extends GameState {
   }
 
   get objectsCount(): number {
-    return this.collisionSystem.countObjects();
+    return this.enemiesCounter + 1; // +1 for the player
   }
 
   update(deltaTime: number): void {
@@ -57,20 +52,22 @@ export class GameplayState extends GameState {
   }
 
   fixedUpdate(fixedDeltaTime: number): void {
+    this.collisionSystem.reset();
+
     // Update player
     this.player.fixedUpdate(fixedDeltaTime);
-    this.collisionSystem.update(this.player.nodeId, this.player.hitBox);
 
     // Update enemies
     this.enemiesController.fixedUpdate(fixedDeltaTime, this.player);
 
     // Check collisions
-    this.collisionSystem.query(this.player.hitBox, (obj) => {
-      if (obj.data.nodeId == this.player.nodeId) return;
+    // Broad phase
+    this.collisionSystem.query(this.player).forEach((enemy: Collidable) => {
+      // Narrow phase
 
       // Destroy the enemy if it collides with the player
-      const enemy = obj.data;
-      this.enemiesController.removeEnemy(enemy);
+      if (enemy.hitBox.intersectsBox(this.player.hitBox))
+        this.enemiesController.removeEnemy(enemy);
     });
 
     // Make cam  follow the player
@@ -94,7 +91,7 @@ export class GameplayState extends GameState {
   // TODO: spawn types and quantity by elapsed time
   spawnEnemies(quantity: number) {
     for (let i = 0; i < quantity; i++) {
-      const enemyTipe = Math.floor(Math.random() * EnemyType.MaxEnemy);
+      const enemyTipe = Math.floor(Math.random() * 1);
       this.enemiesController.addEnemy(enemyTipe);
     }
   }
