@@ -21,6 +21,7 @@
     "typescript-cp": "^0.1.9"
   },
   "dependencies": {
+    "@timohausmann/quadtree-ts": "^2.2.2",
     "threejs-math": "^0.147.0"
   }
 }
