@@ -4,7 +4,7 @@
 
 const ScreenSettings = {
   zBuffering: true,
-  psmz: Z16S,
+  psmz: Screen.Z16,
 };
 
 export { ScreenSettings };
