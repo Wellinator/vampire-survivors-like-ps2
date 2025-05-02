@@ -9,11 +9,7 @@ export class DemonDoor extends Enemy {
   public maxHealth: number = 10;
 
   constructor(x: number, y: number) {
-    super();
-
-    // Spawn position
-    this.position.x = x;
-    this.position.y = y;
+    super(x, y);
 
     this.speed = 30;
     this.animationSpeed = 200;

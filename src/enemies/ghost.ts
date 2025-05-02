@@ -7,14 +7,9 @@ export class Ghost extends Enemy {
   public damage: number = 5;
   public health: number = 7;
   public maxHealth: number = 7;
-  
 
   constructor(x: number, y: number) {
-    super();
-
-    // Spawn position
-    this.position.x = x;
-    this.position.y = y;
+    super(x, y);
 
     this.speed = 25;
     this.animationSpeed = 250;

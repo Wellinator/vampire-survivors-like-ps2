@@ -4,6 +4,7 @@ import { Indexable, NodeGeometry, Rectangle } from "@timohausmann/quadtree-ts";
 import { Alive } from "../alive.abstract";
 import { Hostile } from "../hostile.abstract";
 import { Entity } from "../entity.abstract";
+import { GameTimer } from "../timer";
 
 export enum EnemyType {
   Clown,
@@ -30,8 +31,15 @@ export abstract class Enemy
   abstract health: number;
   abstract maxHealth: number;
 
-  constructor() {
+  constructor(x: number, y: number) {
     super();
+
+    // Spawn position
+    this.position.x = x;
+    this.position.y = y;
+    this.position_start.copy(this.position);
+    this.position_end.copy(this.position);
+
     this.elapsedAnimationTime = 0;
   }
 
@@ -66,7 +74,13 @@ export abstract class Enemy
     );
   }
 
-  public update(deltaTime: number) {}
+  public update(deltaTime: number) {
+    this.position.lerpVectors(
+      this.position_start,
+      this.position_end,
+      GameTimer.getInstance().Lerp
+    );
+  }
 
   public render() {}
 
@@ -75,6 +89,8 @@ export abstract class Enemy
   }
 
   public fixedUpdate(fixedDeltaTime: number) {
+    this.position_start.copy(this.position_end);
+
     this.elapsedAnimationTime += fixedDeltaTime;
     if (this.elapsedAnimationTime >= this.animationSpeed) {
       this.updateSprite();
@@ -82,10 +98,10 @@ export abstract class Enemy
     }
 
     const velocity = (this.speed * fixedDeltaTime) / 1000;
-    this.position.add(this.direction.clone().multiplyScalar(velocity));
+    this.position_end.add(this.direction.clone().multiplyScalar(velocity));
 
     // Update hitBox by new position
-    this.hitBox.setFromCenterAndSize(this.position, this.hitboxSize);
+    this.hitBox.setFromCenterAndSize(this.position_end, this.hitboxSize);
   }
 
   public renderHitBox(): void {

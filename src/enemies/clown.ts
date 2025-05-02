@@ -9,11 +9,7 @@ export class Clown extends Enemy {
   public maxHealth: number = 15;
 
   constructor(x: number, y: number) {
-    super();
-
-    // Spawn position
-    this.position.x = x;
-    this.position.y = y;
+    super(x, y);
 
     this.speed = 25;
     this.animationSpeed = 150;
