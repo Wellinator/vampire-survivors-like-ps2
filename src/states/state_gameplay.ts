@@ -1,4 +1,4 @@
-import { g_Camera } from "../camera";
+import { Camera2D } from "../camera";
 import { Player } from "../player";
 import { GameState } from "./game_state.abstract";
 import { EnemyController } from "../controllers/enemy.controller";
@@ -81,7 +81,7 @@ export class GameplayState extends GameState {
       });
 
     // Make cam  follow the player
-    g_Camera.setPosition(this.player.position);
+    Camera2D.setPosition(this.player.position);
 
     this.level.fixedUpdate(fixedDeltaTime);
   }

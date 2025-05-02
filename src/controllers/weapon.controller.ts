@@ -1,4 +1,4 @@
-import { g_Camera } from "../camera";
+import { Camera2D } from "../camera";
 import { Weapon } from "../weapons/weapon.abstract";
 import { Projectile } from "../projectile/projectile.abstract";
 import { Enemy } from "../enemies/enemy";
@@ -48,7 +48,7 @@ export class WeaponController {
     }
 
     let projectilesHasChanged = false;
-    const screenBox2 = g_Camera.getClippingAABB();
+    const screenBox2 = Camera2D.getClippingAABB();
 
     for (let i = 0; i < this.projectiles.length; i++) {
       const projectile = this.projectiles[i];

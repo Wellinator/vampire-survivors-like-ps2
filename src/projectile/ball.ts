@@ -2,7 +2,7 @@ import TextureManager from "../texture_manager";
 import { Vector2, Box2 } from "threejs-math";
 import { Rectangle, NodeGeometry } from "@timohausmann/quadtree-ts";
 import { Projectile, Projectiles } from "./projectile.abstract";
-import { g_Camera } from "../camera";
+import { Camera2D } from "../camera";
 
 export class Ball extends Projectile {
   private textureManager = TextureManager.getInstance<TextureManager>();
@@ -31,7 +31,7 @@ export class Ball extends Projectile {
     texture.width = this.tileSize.x;
     texture.height = this.tileSize.y;
 
-    const position = g_Camera
+    const position = Camera2D
       .toScreenSpace(this.position)
       .sub(this.halfTileSize);
     texture.draw(position.x, position.y);

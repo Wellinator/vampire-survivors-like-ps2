@@ -1,6 +1,6 @@
 import { Vector2, Box2 } from "threejs-math";
 import { Player } from "../player";
-import { g_Camera } from "../camera";
+import { Camera2D } from "../camera";
 import { Indexable, NodeGeometry, Rectangle } from "@timohausmann/quadtree-ts";
 
 export enum EnemyType {
@@ -68,7 +68,7 @@ export abstract class Enemy implements Indexable {
   }
 
   public renderHitBox(): void {
-    const pos = g_Camera.toScreenSpace(this.hitBox.min.clone()); // Convert to screen space
+    const pos = Camera2D.toScreenSpace(this.hitBox.min.clone()); // Convert to screen space
     Draw.rect(
       pos.x,
       pos.y,

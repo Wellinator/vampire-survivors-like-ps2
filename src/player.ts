@@ -1,7 +1,7 @@
 import { Vector2, Box2 } from "threejs-math";
 import { g_Pad } from "./pad";
 import TextureManager from "./texture_manager";
-import { g_Camera } from "./camera";
+import { Camera2D } from "./camera";
 import { Rectangle, Indexable, NodeGeometry } from "@timohausmann/quadtree-ts";
 
 export class Player implements Indexable {
@@ -99,14 +99,14 @@ export class Player implements Indexable {
     this.texture_atlas.width = this.tileSize.x;
     this.texture_atlas.height = this.tileSize.y;
 
-    const pos = g_Camera
+    const pos = Camera2D
       .toScreenSpace(this.position) // Convert to screen space
       .sub(this.tileSize.clone().divideScalar(2)); // Center the sprite
     this.texture_atlas.draw(pos.x, pos.y);
   }
 
   renderHitBox() {
-    const pos = g_Camera.toScreenSpace(this.hitBox.min.clone()); // Convert to screen space
+    const pos = Camera2D.toScreenSpace(this.hitBox.min.clone()); // Convert to screen space
     Draw.rect(
       pos.x,
       pos.y,

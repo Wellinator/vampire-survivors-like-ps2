@@ -5,7 +5,7 @@ import { Enemy, EnemyType } from "../enemies/enemy";
 import { FourEyesBug } from "../enemies/four_yeyes_bug";
 import { Ghost } from "../enemies/ghost";
 import { Homework } from "../enemies/home_work";
-import { g_Camera } from "../camera";
+import { Camera2D } from "../camera";
 import { SCREEN_VECTOR } from "../scripts/init/init-screen";
 import TextureManager from "../texture_manager";
 import { Player } from "../player";
@@ -65,7 +65,7 @@ export class EnemyController {
       32
     );
 
-    const spawnPos = g_Camera.toWorldSpace(spawnPosScreenSpace); // Convert to world space
+    const spawnPos = Camera2D.toWorldSpace(spawnPosScreenSpace); // Convert to world space
 
     switch (enemy) {
       case EnemyType.Ghost:
@@ -119,7 +119,7 @@ export class EnemyController {
   }
 
   render(): void {
-    const screenBox2 = g_Camera.getClippingAABB();
+    const screenBox2 = Camera2D.getClippingAABB();
     const query: Rectangle = new Rectangle({
       x: screenBox2.min.x,
       y: screenBox2.min.y,
@@ -148,7 +148,7 @@ export class EnemyController {
       enemySprite.width = enemy.tileSize.x;
       enemySprite.height = enemy.tileSize.y;
 
-      const position = g_Camera
+      const position = Camera2D
         .toScreenSpace(enemy.position) // Convert to screen space
         .sub(enemy.tileSize.clone().divideScalar(2)); // Center the sprite
 

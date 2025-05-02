@@ -35,4 +35,4 @@ class Camera {
   }
 }
 
-export const g_Camera = new Camera();
+export const Camera2D = new Camera();

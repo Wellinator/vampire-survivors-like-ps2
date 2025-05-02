@@ -1,5 +1,5 @@
 import { Vector2 } from "threejs-math";
-import { g_Camera } from "../camera";
+import { Camera2D } from "../camera";
 import TextureManager from "../texture_manager";
 import { Level } from "./level.abstract";
 
@@ -34,7 +34,7 @@ export class Level1 extends Level {
     );
 
     const origin = new Vector2(-(this.levelWidth / 2), -(this.levelHeight / 2));
-    const position = g_Camera.toScreenSpace(origin);
+    const position = Camera2D.toScreenSpace(origin);
     backGround.draw(position.x, position.y);
   }
 
