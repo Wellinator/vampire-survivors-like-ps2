@@ -2,8 +2,6 @@ import TextureManager from "../texture_manager";
 import { Weapon, Weapons } from "./weapon.abstract";
 import { Projectile } from "../projectile/projectile.abstract";
 import { Ball } from "../projectile/ball";
-import { Player } from "../player";
-import { Enemy } from "../enemies/enemy";
 import { Vector2 } from "threejs-math";
 
 export class BaseballBat extends Weapon {

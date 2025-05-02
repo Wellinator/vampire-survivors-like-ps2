@@ -1,9 +1,7 @@
 import { Camera2D } from "../camera";
 import { Weapon } from "../weapons/weapon.abstract";
 import { Projectile } from "../projectile/projectile.abstract";
-import { Enemy } from "../enemies/enemy";
-import { Player } from "../player";
-import { Box2, Vector2 } from "threejs-math";
+import { Vector2 } from "threejs-math";
 
 export class WeaponController {
   public onWeaponRady!: (weapon: Weapon) => void;
