@@ -61,14 +61,13 @@ export class WeaponController {
 
     for (let i = 0; i < this.projectiles.length; i++) {
       const projectile = this.projectiles[i];
+      projectile.fixedUpdate(fixedDeltaTime);
 
       if (!screenBox2.intersectsBox(projectile.aabb)) {
         projectile.markAsExpired();
         this.projectilesHasChanged = true;
         continue;
       }
-
-      projectile.fixedUpdate(fixedDeltaTime);
     }
 
     if (this.projectilesHasChanged) {

@@ -31,17 +31,17 @@ export class Ball extends Projectile {
     texture.width = this.tileSize.x;
     texture.height = this.tileSize.y;
 
-    const position = Camera2D
-      .toScreenSpace(this.position)
-      .sub(this.halfTileSize);
+    const position = Camera2D.toScreenSpace(this.position).sub(
+      this.halfTileSize
+    );
     texture.draw(position.x, position.y);
   }
 
   qtIndex(node: NodeGeometry): number[] {
     return Rectangle.prototype.qtIndex.call(
       {
-        x: this.position.x,
-        y: this.position.y,
+        x: this.position.x - this.size.x / 2,
+        y: this.position.y - this.size.y / 2,
         width: this.size.x,
         height: this.size.y,
       },
