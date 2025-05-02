@@ -8,7 +8,7 @@ export class Ball extends Projectile {
   private textureManager = TextureManager.getInstance<TextureManager>();
   readonly tileSize: Vector2 = new Vector2(32, 32);
   readonly halfTileSize: Vector2 = new Vector2(16, 16);
-  public size: Vector2 = new Vector2(16, 16);
+  public size: Vector2 = new Vector2(10, 10);
   public aabb: Box2 = new Box2(new Vector2(0, 0), new Vector2(0, 0));
 
   constructor(textureId: number, damage: number, range: number, speed: number) {

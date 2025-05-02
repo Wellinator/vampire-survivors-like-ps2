@@ -13,7 +13,7 @@ export class BaseballBat extends Weapon {
 
   constructor() {
     const name = "Ball";
-    const cooldown = 1000.0;
+    const cooldown = 2000.0;
     const damage = 10.0;
     const range = 1.0;
     const speed = 20.0;
@@ -37,11 +37,10 @@ export class BaseballBat extends Weapon {
   fixedUpdate(fixedDeltaTime: number): void {}
 
   resetCooldown(): void {
-    this.cooldown = 1000.0;
+    this.cooldown = 2000.0;
   }
 
   attack(origin: Vector2, target: Vector2): Projectile {
-    console.log("Attacking rand enemy...");
     this.resetCooldown();
 
     const projectile = new Ball(
