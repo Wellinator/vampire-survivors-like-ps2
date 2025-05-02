@@ -86,10 +86,10 @@ export class GameplayState extends GameState {
             if (enemy.hitBox.intersectsBox(projectile.aabb)) {
               this.weaponsController.removeProjectile(projectile);
 
-              if (enemy.isAlive())
-                return enemy.takeDamage(projectile.getDamage());
-
-              this.enemiesController.removeEnemy(enemy);
+              if (enemy.isAlive()) {
+                enemy.takeDamage(projectile.getDamage());
+                if (!enemy.isAlive()) this.enemiesController.removeEnemy(enemy);
+              }
             }
           });
       });
