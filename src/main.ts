@@ -33,7 +33,6 @@ os.setInterval(() => {
       // Update stage
       Camera.update();
       g_Pad.update();
-
       gameState.update(deltaTime);
     },
     (fixedDeltaTime) => {
@@ -49,6 +48,7 @@ os.setInterval(() => {
       font.print(5, 25, `render: ${gameTimer.RenderTime.toFixed(2)}ms`);
       font.print(5, 45, `update: ${gameTimer.UpdateTime.toFixed(2)}ms`);
       font.print(5, 65, `Objects: ${gameState.objectsCount}`);
+      font.print(5, 85, `Projectiles: ${gameState.projectilesCount}`);
 
       Screen.flip();
     }

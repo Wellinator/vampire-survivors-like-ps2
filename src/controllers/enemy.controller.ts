@@ -10,6 +10,8 @@ import { SCREEN_VECTOR } from "../scripts/init/init-screen";
 import TextureManager from "../texture_manager";
 import { Player } from "../player";
 import { CollisionController } from "./collision.controller";
+import { randInt } from "../mathutils.js";
+import { Rectangle } from "@timohausmann/quadtree-ts";
 
 export class EnemyController {
   private id_counter: number = 1;
@@ -99,7 +101,6 @@ export class EnemyController {
   removeEnemy(enemy: Enemy): void {
     const i = this.enemies.findIndex((e) => e.id === enemy.id);
     if (i > -1) {
-      enemy.isAlive = false;
       this.enemies.splice(i, 1);
     }
   }
@@ -118,25 +119,16 @@ export class EnemyController {
   }
 
   render(): void {
-    const screenBox2 = g_Camera.getHitBox();
+    const screenBox2 = g_Camera.getClippingAABB();
+    const query: Rectangle = new Rectangle({
+      x: screenBox2.min.x,
+      y: screenBox2.min.y,
+      width: screenBox2.max.x - screenBox2.min.x,
+      height: screenBox2.max.y - screenBox2.min.y,
+    });
 
-    for (let i = 0; i < this.enemies.length; i++) {
-      const enemy = this.enemies[i];
-
-      // const enemy = this.enemies.find((e) => e.id == enemyId);
-      // if (!enemy || !enemy.id || !enemy.isAlive) return; // Skip player collision or dead enemies
-
-      // Narrow phase collision detection
-      // if (!enemy.hitBox.intersectsBox(screenBox2)) return;
-
-      // Draw.rect(
-      //   enemy.hitBox.min.x - globalPosPad.x,
-      //   enemy.hitBox.min.y - globalPosPad.y,
-      //   enemy.tileSize.x,
-      //   enemy.tileSize.y,
-      //   Color.new(255, 0, 0, 128)
-      // );
-
+    this.collisionSystem.query(query).forEach((collidable) => {
+      const enemy = collidable as Enemy;
       const shouldFlipX = enemy.direction.x == -1;
       const currentTileX = enemy.tile_index * enemy.tileSize.x;
       const startX = currentTileX;
@@ -161,20 +153,7 @@ export class EnemyController {
         .sub(enemy.tileSize.clone().divideScalar(2)); // Center the sprite
 
       enemySprite.draw(position.x, position.y);
-    }
-
-    // // Broad phase collision detection
-    // this.collisionSystem.query(screenBox2, (obj) => {
-    //   const enemyId: number = obj.data?.id;
-    // });
-
-    // Draw.rect(
-    //   min.x - globalPosPad.x,
-    //   min.y - globalPosPad.y,
-    //   max.x - min.x,
-    //   max.y - min.y,
-    //   Color.new(200, 200, 200, 64)
-    // );
+    });
   }
 
   clearAll(): void {
@@ -218,4 +197,10 @@ export class EnemyController {
 
     return new Vector2(x, y);
   };
+
+  public getRandonEnemy(): Enemy | null {
+    if (this.enemies.length == 0) return null;
+    const randIndex = randInt(0, this.enemiesCounter - 1);
+    return this.enemies[randIndex];
+  }
 }

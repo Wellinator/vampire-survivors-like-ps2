@@ -20,6 +20,12 @@ class Camera {
     return new Box2(this.position, this.position.clone().add(SCREEN_VECTOR));
   }
 
+  public getClippingAABB(): Box2 {
+    const min = this.toWorldSpace(new Vector2(0, 0));
+    const max = this.toWorldSpace(SCREEN_VECTOR);
+    return new Box2(min, max);
+  }
+
   public toScreenSpace(worldPos: Vector2): Vector2 {
     return worldPos.clone().sub(this.position).add(this.screenOffset);
   }
