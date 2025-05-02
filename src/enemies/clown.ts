@@ -1,6 +1,10 @@
+import { Vector2 } from "threejs-math";
 import { Enemy } from "./enemy";
 
 export class Clown extends Enemy {
+  public readonly tileSize: Vector2 = new Vector2(64, 64);
+  public readonly hitboxSize: Vector2 = new Vector2(20, 40);
+
   constructor(x: number, y: number) {
     super();
 
@@ -10,17 +14,11 @@ export class Clown extends Enemy {
 
     this.speed = 25;
     this.animationSpeed = 150;
-
-    this.tileSize.x = 64;
-    this.tileSize.y = 64;
-
-    this.hitboxSize.x = 20;
-    this.hitboxSize.y = 40;
   }
 
   updateSprite(): void {
     const MAX_INDEX = 6;
-    this.tile_index++;
-    this.tile_index %= MAX_INDEX;
+    this.tileIndex++;
+    this.tileIndex %= MAX_INDEX;
   }
 }

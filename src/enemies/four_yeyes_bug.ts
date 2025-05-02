@@ -1,26 +1,24 @@
+import { Vector2 } from "threejs-math";
 import { Enemy } from "./enemy";
 
 export class FourEyesBug extends Enemy {
+  public readonly tileSize: Vector2 = new Vector2(64, 64);
+  public readonly hitboxSize: Vector2 = new Vector2(40, 30);
+
   constructor(x: number, y: number) {
     super();
-    
+
     // Spawn position
     this.position.x = x;
     this.position.y = y;
 
     this.speed = 40;
     this.animationSpeed = 200;
-
-    this.tileSize.x = 64;
-    this.tileSize.y = 64;
-
-    this.hitboxSize.x = 40;
-    this.hitboxSize.y = 30;
   }
 
   updateSprite() {
     const MAX_INDEX = 4;
-    this.tile_index++;
-    this.tile_index %= MAX_INDEX;
+    this.tileIndex++;
+    this.tileIndex %= MAX_INDEX;
   }
 }

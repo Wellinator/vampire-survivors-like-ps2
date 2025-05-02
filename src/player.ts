@@ -3,28 +3,21 @@ import { g_Pad } from "./pad";
 import TextureManager from "./texture_manager";
 import { Camera2D } from "./camera";
 import { Rectangle, Indexable, NodeGeometry } from "@timohausmann/quadtree-ts";
+import { Entity } from "./entity.abstract";
 
-export class Player implements Indexable {
-  public readonly id: number = 1;
-  public readonly tileSize: Vector2 = new Vector2(32, 32);
+export class Player extends Entity implements Indexable {
   public readonly hitboxSize: Vector2 = new Vector2(20, 32);
+  public readonly tileSize: Vector2 = new Vector2(32, 32);
 
-  public nodeId: number = -1;
-  public textureId: number = -1;
   public texture_atlas!: Image;
-  public tile_index: number = 0;
-  public animationSpeed: number;
-  public elapsedAnimationTime: number;
-  public speed: number;
-  public velocity: Vector2 = new Vector2(0, 0);
-  public direction: Vector2 = new Vector2(0, 0);
-  public position: Vector2 = new Vector2(0, 0);
 
   hitBox: Box2 = new Box2(new Vector2(0, 0), new Vector2(0, 0));
 
   _isMooving: boolean = false;
 
   constructor() {
+    super();
+
     this.speed = 150;
     this.elapsedAnimationTime = 0;
     this.animationSpeed = 80;
@@ -85,7 +78,7 @@ export class Player implements Indexable {
 
   render() {
     const shouldFlipX = this.direction.x == -1;
-    const currentTileX = this.tile_index * this.tileSize.x;
+    const currentTileX = this.tileIndex * this.tileSize.x;
 
     const startX = currentTileX;
     const endX = startX + this.tileSize.x;
@@ -99,8 +92,7 @@ export class Player implements Indexable {
     this.texture_atlas.width = this.tileSize.x;
     this.texture_atlas.height = this.tileSize.y;
 
-    const pos = Camera2D
-      .toScreenSpace(this.position) // Convert to screen space
+    const pos = Camera2D.toScreenSpace(this.position) // Convert to screen space
       .sub(this.tileSize.clone().divideScalar(2)); // Center the sprite
     this.texture_atlas.draw(pos.x, pos.y);
   }
@@ -124,17 +116,17 @@ export class Player implements Indexable {
     const MAX_IDLE_INDEX = 6;
     const MAX_RUNNING_INDEX = 6;
 
-    this.tile_index++;
+    this.tileIndex++;
 
     if (this.isMooving()) {
-      this.tile_index %= MAX_RUNNING_INDEX;
+      this.tileIndex %= MAX_RUNNING_INDEX;
 
       //Shift right by MAX_IDLE_INDEX
-      this.tile_index += MAX_IDLE_INDEX;
+      this.tileIndex += MAX_IDLE_INDEX;
       return;
     }
 
-    this.tile_index %= MAX_IDLE_INDEX;
+    this.tileIndex %= MAX_IDLE_INDEX;
   }
 
   setIdle() {

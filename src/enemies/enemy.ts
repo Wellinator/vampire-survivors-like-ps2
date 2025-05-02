@@ -1,7 +1,7 @@
 import { Vector2, Box2 } from "threejs-math";
-import { Player } from "../player";
 import { Camera2D } from "../camera";
 import { Indexable, NodeGeometry, Rectangle } from "@timohausmann/quadtree-ts";
+import { Entity } from "../entity.abstract";
 
 export enum EnemyType {
   Clown,
@@ -12,13 +12,7 @@ export enum EnemyType {
   MaxEnemy,
 }
 
-export abstract class Enemy implements Indexable {
-  public id: number = -1;
-  public nodeId: number = -1;
-  public textureID: number = 0;
-  public tile_index: number = 0;
-  public tileSize: Vector2 = new Vector2(0, 0);
-  public hitboxSize: Vector2 = new Vector2(0, 0);
+export abstract class Enemy extends Entity implements Indexable {
   public animationSpeed: number = 500;
   public elapsedAnimationTime: number;
   public speed: number = 50;
@@ -28,6 +22,7 @@ export abstract class Enemy implements Indexable {
   public hitBox: Box2 = new Box2(new Vector2(0, 0), new Vector2(0, 0));
 
   constructor() {
+    super();
     this.elapsedAnimationTime = 0;
   }
 
@@ -46,19 +41,20 @@ export abstract class Enemy implements Indexable {
     );
   }
 
-  abstract updateSprite(): void;
-
   public update(deltaTime: number) {}
 
-  public fixedUpdate(fixedDeltaTime: number, player: Player) {
+  public render() {}
+
+  public setDirection(target: Vector2) {
+    this.direction = target.clone().sub(this.position).normalize();
+  }
+
+  public fixedUpdate(fixedDeltaTime: number) {
     this.elapsedAnimationTime += fixedDeltaTime;
     if (this.elapsedAnimationTime >= this.animationSpeed) {
       this.updateSprite();
       this.elapsedAnimationTime = 0;
     }
-
-    // Set enemy direction by player
-    this.direction = player.position.clone().sub(this.position).normalize();
 
     const velocity = (this.speed * fixedDeltaTime) / 1000;
     this.position.add(this.direction.clone().multiplyScalar(velocity));

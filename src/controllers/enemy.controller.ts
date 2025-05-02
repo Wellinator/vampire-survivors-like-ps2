@@ -70,23 +70,23 @@ export class EnemyController {
     switch (enemy) {
       case EnemyType.Ghost:
         newEnemy = new Ghost(spawnPos.x, spawnPos.y);
-        newEnemy.textureID = this.TextureRepository.Ghost;
+        newEnemy.textureId = this.TextureRepository.Ghost;
         break;
       case EnemyType.Clown:
         newEnemy = new Clown(spawnPos.x, spawnPos.y);
-        newEnemy.textureID = this.TextureRepository.Clown;
+        newEnemy.textureId = this.TextureRepository.Clown;
         break;
       case EnemyType.DemonDoor:
         newEnemy = new DemonDoor(spawnPos.x, spawnPos.y);
-        newEnemy.textureID = this.TextureRepository.DemonDoor;
+        newEnemy.textureId = this.TextureRepository.DemonDoor;
         break;
       case EnemyType.Homework:
         newEnemy = new Homework(spawnPos.x, spawnPos.y);
-        newEnemy.textureID = this.TextureRepository.Homework;
+        newEnemy.textureId = this.TextureRepository.Homework;
         break;
       case EnemyType.FourEyesBug:
         newEnemy = new FourEyesBug(spawnPos.x, spawnPos.y);
-        newEnemy.textureID = this.TextureRepository.FourEyesBug;
+        newEnemy.textureId = this.TextureRepository.FourEyesBug;
         break;
       default:
         throw new Error(`Invalid enemy type: ${enemy}`);
@@ -113,7 +113,8 @@ export class EnemyController {
 
   fixedUpdate(fixedDeltaTime: number, player: Player): void {
     for (let i = 0; i < this.enemies.length; i++) {
-      this.enemies[i].fixedUpdate(fixedDeltaTime, player);
+      this.enemies[i].setDirection(player.position);
+      this.enemies[i].fixedUpdate(fixedDeltaTime);
       this.collisionSystem.insert(this.enemies[i]);
     }
   }
@@ -130,7 +131,7 @@ export class EnemyController {
     this.collisionSystem.query(query).forEach((collidable) => {
       const enemy = collidable as Enemy;
       const shouldFlipX = enemy.direction.x == -1;
-      const currentTileX = enemy.tile_index * enemy.tileSize.x;
+      const currentTileX = enemy.tileIndex * enemy.tileSize.x;
       const startX = currentTileX;
       const endX = startX + enemy.tileSize.x;
       const startY = 0;
@@ -138,7 +139,7 @@ export class EnemyController {
 
       const enemySprite =
         TextureManager.getInstance<TextureManager>().getTexture(
-          enemy.textureID
+          enemy.textureId
         );
 
       enemySprite.startx = shouldFlipX ? endX : startX;
@@ -148,8 +149,7 @@ export class EnemyController {
       enemySprite.width = enemy.tileSize.x;
       enemySprite.height = enemy.tileSize.y;
 
-      const position = Camera2D
-        .toScreenSpace(enemy.position) // Convert to screen space
+      const position = Camera2D.toScreenSpace(enemy.position) // Convert to screen space
         .sub(enemy.tileSize.clone().divideScalar(2)); // Center the sprite
 
       enemySprite.draw(position.x, position.y);
