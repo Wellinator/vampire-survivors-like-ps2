@@ -83,11 +83,8 @@ export class Player extends Entity implements Indexable, Alive {
     this.velocity.x = (deltaPadX * this.speed * fixedDeltaTime) / 1000;
     this.velocity.y = (deltaPadY * this.speed * fixedDeltaTime) / 1000;
 
-    this.position_end = this.position_end.add(this.velocity);
-    this.hitBox.setFromCenterAndSize(
-      this.position_end.clone(),
-      this.hitboxSize
-    );
+    this.position_end.add(this.velocity);
+    this.hitBox.setFromCenterAndSize(this.position_end, this.hitboxSize);
   }
 
   render() {
