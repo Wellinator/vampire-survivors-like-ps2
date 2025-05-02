@@ -17,8 +17,6 @@ export abstract class Entity {
   abstract readonly tileSize: Vector2;
   abstract readonly hitboxSize: Vector2;
 
-  constructor() {}
-
   abstract update(deltaTime: number): void;
   abstract fixedUpdate(fixedDeltaTime: number): void;
   abstract render(): void;
