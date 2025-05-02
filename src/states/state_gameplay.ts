@@ -114,6 +114,7 @@ export class GameplayState extends GameState {
   render(): void {
     this.level.render();
     this.player.render();
+    this.player.renderHP();
     this.enemiesController.render();
     this.weaponsController.render();
   }

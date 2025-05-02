@@ -28,6 +28,7 @@ export abstract class Enemy
 
   abstract damage: number;
   abstract health: number;
+  abstract maxHealth: number;
 
   constructor() {
     super();

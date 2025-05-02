@@ -6,6 +6,7 @@ export class Homework extends Enemy {
   public readonly hitboxSize: Vector2 = new Vector2(40, 32);
   public damage: number = 2;
   public health: number = 5;
+  public maxHealth: number = 5;
 
   constructor(x: number, y: number) {
     super();

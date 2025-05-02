@@ -6,6 +6,7 @@ export class Clown extends Enemy {
   public readonly hitboxSize: Vector2 = new Vector2(20, 40);
   public damage: number = 7;
   public health: number = 15;
+  public maxHealth: number = 15;
 
   constructor(x: number, y: number) {
     super();

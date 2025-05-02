@@ -6,6 +6,7 @@ export class DemonDoor extends Enemy {
   public readonly hitboxSize: Vector2 = new Vector2(42, 43);
   public damage: number = 7;
   public health: number = 10;
+  public maxHealth: number = 10;
 
   constructor(x: number, y: number) {
     super();

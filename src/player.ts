@@ -10,6 +10,7 @@ export class Player extends Entity implements Indexable, Alive {
   public readonly hitboxSize: Vector2 = new Vector2(20, 32);
   public readonly tileSize: Vector2 = new Vector2(32, 32);
   public health: number = 100;
+  public maxHealth = 100;
   public texture_atlas!: Image;
 
   hitBox: Box2 = new Box2(new Vector2(0, 0), new Vector2(0, 0));
@@ -96,6 +97,37 @@ export class Player extends Entity implements Indexable, Alive {
     const pos = Camera2D.toScreenSpace(this.position) // Convert to screen space
       .sub(this.tileSize.clone().divideScalar(2)); // Center the sprite
     this.texture_atlas.draw(pos.x, pos.y);
+  }
+
+  renderHP() {
+    const offset = new Vector2(0, 20);
+    const size = new Vector2(22, 5);
+    const hpSize = size.clone().subScalar(2);
+
+    // HP border
+    const borderPos = Camera2D.toScreenSpace(this.position)
+      .add(offset)
+      .sub(size.clone().divideScalar(2));
+    Draw.rect(
+      borderPos.x,
+      borderPos.y,
+      size.x,
+      size.y,
+      Color.new(0, 0, 0, 128)
+    );
+
+    // HP
+    const hpPos = Camera2D.toScreenSpace(this.position)
+      .add(offset)
+      .sub(hpSize.clone().divideScalar(2));
+    const hpWidthByHealth = hpSize.x * (this.health / this.maxHealth);
+    Draw.rect(
+      hpPos.x,
+      hpPos.y,
+      hpWidthByHealth,
+      hpSize.y,
+      Color.new(200, 0, 0, 128)
+    );
   }
 
   renderHitBox() {
