@@ -1,3 +1,5 @@
+import { Singleton } from "./abstract/singleton";
+
 export const FrameLimits = {
   FPS_5: 1000 / 5, // ~200ms
   FPS_10: 1000 / 10, // ~100ms
@@ -8,7 +10,7 @@ export const FrameLimits = {
   FPS_120: 1000 / 120, // ~8.33ms
 };
 
-export class GameTimer {
+export class GameTimer extends Singleton {
   private timer = Timer.new();
   private deltaTime: number = 0;
   private lastTime: number = 0;
@@ -24,7 +26,6 @@ export class GameTimer {
   private updateTracker = {
     accumulator: 0,
     frameLimit: 0,
-    fixedDeltaTime: 0,
     steps: 0,
   };
 
@@ -50,10 +51,16 @@ export class GameTimer {
     return this.updateTime / 1000; // Convert from microseconds to milliseconds
   }
 
+  get Lerp(): number {
+    return this.updateTracker.accumulator / this.updateTracker.frameLimit;
+  }
+
   constructor(
-    updateFrameLimit: number = FrameLimits.FPS_30,
-    renderFrameLimit: number = FrameLimits.FPS_60
+    updateFrameLimit: number = FrameLimits.FPS_15,
+    renderFrameLimit: number = FrameLimits.FPS_30
   ) {
+    super();
+
     this.lastTime = Timer.getTime(this.timer) / 1000; // Convert from microseconds to milliseconds
 
     this.updateTracker.frameLimit = updateFrameLimit;
@@ -125,7 +132,6 @@ export class GameTimer {
 
   setUpdateFrameLimit(frameLimit: number) {
     this.updateTracker.frameLimit = frameLimit;
-    this.updateTracker.fixedDeltaTime = 1000 / frameLimit;
   }
 
   setRenderFrameLimit(frameLimit: number) {

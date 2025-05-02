@@ -24,13 +24,12 @@ Camera.type(Camera.LOOKAT);
 
 const grassColor = Color.new(196, 224, 83, 128);
 
-const gameTimer = new GameTimer(FrameLimits.FPS_15, FrameLimits.FPS_30);
+const gameTimer = GameTimer.getInstance();
 const gameState = new GameplayState();
 
 os.setInterval(() => {
   gameTimer.update(
     (deltaTime) => {
-      // Update stage
       Camera.update();
       g_Pad.update();
       gameState.update(deltaTime);

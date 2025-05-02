@@ -5,6 +5,7 @@ import { Camera2D } from "./camera";
 import { Rectangle, Indexable, NodeGeometry } from "@timohausmann/quadtree-ts";
 import { Alive } from "./alive.abstract";
 import { Entity } from "./entity.abstract";
+import { GameTimer } from "./timer";
 
 export class Player extends Entity implements Indexable, Alive {
   public readonly hitboxSize: Vector2 = new Vector2(20, 32);
@@ -47,6 +48,12 @@ export class Player extends Entity implements Indexable, Alive {
   }
 
   update(deltaTime: number) {
+    this.position.lerpVectors(
+      this.position_start,
+      this.position_end,
+      GameTimer.getInstance().Lerp
+    );
+
     // Set player idle or running
     g_Pad.lx + g_Pad.ly != 0 ? this.setRunning() : this.setIdle();
 
@@ -62,6 +69,8 @@ export class Player extends Entity implements Indexable, Alive {
   }
 
   fixedUpdate(fixedDeltaTime: number) {
+    this.position_start.copy(this.position_end);
+
     this.elapsedAnimationTime += fixedDeltaTime;
     if (this.elapsedAnimationTime >= this.animationSpeed) {
       this.updateSprite();
@@ -74,8 +83,11 @@ export class Player extends Entity implements Indexable, Alive {
     this.velocity.x = (deltaPadX * this.speed * fixedDeltaTime) / 1000;
     this.velocity.y = (deltaPadY * this.speed * fixedDeltaTime) / 1000;
 
-    this.position = this.position.add(this.velocity);
-    this.hitBox.setFromCenterAndSize(this.position.clone(), this.hitboxSize);
+    this.position_end = this.position_end.add(this.velocity);
+    this.hitBox.setFromCenterAndSize(
+      this.position_end.clone(),
+      this.hitboxSize
+    );
   }
 
   render() {

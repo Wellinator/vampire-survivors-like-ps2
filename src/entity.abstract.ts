@@ -9,6 +9,9 @@ export abstract class Entity {
   public speed!: number;
   public velocity: Vector2 = new Vector2(0, 0);
   public direction: Vector2 = new Vector2(0, 0);
+
+  protected position_start: Vector2 = new Vector2(0, 0);
+  protected position_end: Vector2 = new Vector2(0, 0);
   public position: Vector2 = new Vector2(0, 0);
 
   abstract readonly tileSize: Vector2;
