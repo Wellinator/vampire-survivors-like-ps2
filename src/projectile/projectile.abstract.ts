@@ -7,7 +7,6 @@ export enum Projectiles {
 
 export abstract class Projectile implements Indexable {
   public textureId: number = -1;
-  public expired: boolean = false;
 
   abstract readonly tileSize: Vector2;
   abstract size: Vector2;
@@ -17,6 +16,7 @@ export abstract class Projectile implements Indexable {
   protected damage: number;
   protected range: number;
   protected speed: number;
+  protected expired: boolean = false;
 
   public direction: Vector2 = new Vector2(0, 0);
   public position: Vector2 = new Vector2(0, 0);
@@ -31,4 +31,16 @@ export abstract class Projectile implements Indexable {
   abstract fixedUpdate(fixedDeltaTime: number): void;
   abstract draw(): void;
   abstract qtIndex(node: NodeGeometry): number[];
+
+  public isExpired(): boolean {
+    return this.expired;
+  }
+
+  public markAsExpired(): void {
+    this.expired = true;
+  }
+
+  public markAsUnexpired(): void {
+    this.expired = false;
+  }
 }

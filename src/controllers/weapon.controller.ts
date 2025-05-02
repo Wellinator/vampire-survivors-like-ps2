@@ -10,8 +10,15 @@ export class WeaponController {
   private weapons: Weapon[] = [];
   private projectiles: Projectile[] = [];
 
+  // Proprerty used for cache control
+  private projectilesHasChanged = false;
+
   get projectilesCount(): number {
     return this.projectiles.length;
+  }
+
+  getProjectiles(): Array<Projectile> {
+    return this.projectiles;
   }
 
   public registerWeapon(weapon: Weapon): void {
@@ -23,8 +30,13 @@ export class WeaponController {
     if (i > -1) this.weapons.splice(i, 1);
   }
 
-  public removeExpiredProjectiles(): void {
-    this.projectiles = this.projectiles.filter((p) => p.expired === false);
+  public removeProjectile(projectile: Projectile): void {
+    projectile.markAsExpired();
+    this.projectilesHasChanged = true;
+  }
+
+  private removeExpiredProjectiles(): void {
+    this.projectiles = this.projectiles.filter((p) => p.isExpired() === false);
   }
 
   public update(deltaTime: number): void {
@@ -47,22 +59,21 @@ export class WeaponController {
       this.weapons[i].fixedUpdate(fixedDeltaTime);
     }
 
-    let projectilesHasChanged = false;
     const screenBox2 = Camera2D.getClippingAABB();
 
     for (let i = 0; i < this.projectiles.length; i++) {
       const projectile = this.projectiles[i];
 
       if (!screenBox2.intersectsBox(projectile.aabb)) {
-        projectile.expired = true;
-        projectilesHasChanged = true;
+        projectile.markAsExpired();
+        this.projectilesHasChanged = true;
         continue;
       }
 
       projectile.fixedUpdate(fixedDeltaTime);
     }
 
-    if (projectilesHasChanged) {
+    if (this.projectilesHasChanged) {
       this.removeExpiredProjectiles();
     }
   }

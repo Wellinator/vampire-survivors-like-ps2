@@ -13,6 +13,7 @@ import { Enemy, EnemyType } from "../enemies/enemy";
 import { WeaponController } from "../controllers/weapon.controller";
 import { BaseballBat } from "../weapons/bat";
 import { Weapon } from "../weapons/weapon.abstract";
+import { Projectile } from "../projectile/projectile.abstract";
 
 export class GameplayState extends GameState {
   public player: Player; // Replace with actual player type
@@ -73,15 +74,32 @@ export class GameplayState extends GameState {
     this.weaponsController.fixedUpdate(fixedDeltaTime);
 
     // Check collisions
+
+    // Projectiles VS Enemies
+    this.weaponsController
+      .getProjectiles()
+      .forEach((projectile: Projectile) => {
+        this.collisionSystem
+          .query(projectile)
+          .forEach((collidable: Collidable) => {
+            const enemy = collidable as Enemy;
+            if (enemy.hitBox.intersectsBox(projectile.aabb)) {
+              // TODO: implement apply damage to alive entity
+              this.weaponsController.removeProjectile(projectile);
+              this.enemiesController.removeEnemy(enemy);
+            }
+          });
+      });
+
+    // Player VS Enemies
     // Broad phase
     this.collisionSystem
       .query(this.player)
       .forEach((collidable: Collidable) => {
-        // Narrow phase
-
-        // Destroy the enemy if it collides with the player
         const enemy = collidable as Enemy;
+        // Narrow phase
         if (enemy.hitBox.intersectsBox(this.player.hitBox))
+          // TODO: implement apply damage to alive entity
           this.enemiesController.removeEnemy(enemy);
       });
 
