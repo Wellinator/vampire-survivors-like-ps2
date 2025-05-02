@@ -4,6 +4,7 @@ import { Projectile } from "../projectile/projectile.abstract";
 import { Ball } from "../projectile/ball";
 import { Player } from "../player";
 import { Enemy } from "../enemies/enemy";
+import { Vector2 } from "threejs-math";
 
 export class BaseballBat extends Weapon {
   private TextureRepository = {
@@ -39,7 +40,7 @@ export class BaseballBat extends Weapon {
     this.cooldown = 1000.0;
   }
 
-  attack(player: Player, target: Enemy): Projectile {
+  attack(origin: Vector2, target: Vector2): Projectile {
     console.log("Attacking rand enemy...");
     this.resetCooldown();
 
@@ -50,11 +51,8 @@ export class BaseballBat extends Weapon {
       this.speed
     );
 
-    projectile.position = player.position.clone();
-    projectile.direction = target.position
-      .clone()
-      .sub(projectile.position)
-      .normalize();
+    projectile.position = origin.clone();
+    projectile.direction = target.clone().sub(projectile.position).normalize();
 
     return projectile;
   }

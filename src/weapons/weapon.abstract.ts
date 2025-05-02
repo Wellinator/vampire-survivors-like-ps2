@@ -1,5 +1,4 @@
-import { Enemy } from "../enemies/enemy";
-import { Player } from "../player";
+import { Vector2 } from "threejs-math";
 import { Projectile } from "../projectile/projectile.abstract";
 
 export enum Weapons {
@@ -30,7 +29,7 @@ export abstract class Weapon {
 
   abstract update(deltaTime: number): void;
   abstract fixedUpdate(fixedDeltaTime: number): void;
-  abstract attack(player: Player, target: Enemy): Projectile;
+  abstract attack(origin: Vector2, target: Vector2): Projectile;
   abstract registerTextures(): void;
 
   public getType(): Weapons {

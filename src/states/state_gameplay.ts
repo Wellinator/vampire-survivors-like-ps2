@@ -31,7 +31,12 @@ export class GameplayState extends GameState {
     this.weaponsController.registerWeapon(new BaseballBat());
     this.weaponsController.onWeaponRady = (weapon: Weapon) => {
       const randEnemy = this.enemiesController.getRandonEnemy();
-      if (randEnemy) this.weaponsController.attack(weapon, this.player, randEnemy);
+      if (randEnemy)
+        this.weaponsController.attack(
+          weapon,
+          this.player.position,
+          randEnemy.position
+        );
     };
 
     // TODO: move to stageHandler in the level class

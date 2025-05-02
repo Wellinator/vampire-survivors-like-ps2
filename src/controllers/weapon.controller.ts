@@ -38,8 +38,8 @@ export class WeaponController {
     }
   }
 
-  public attack(weapon: Weapon, player: Player, target: Enemy) {
-    this.projectiles.push(weapon.attack(player, target));
+  public attack(weapon: Weapon, origin: Vector2, target: Vector2) {
+    this.projectiles.push(weapon.attack(origin, target));
   }
 
   public fixedUpdate(fixedDeltaTime: number): void {
