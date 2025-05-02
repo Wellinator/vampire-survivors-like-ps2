@@ -43,4 +43,8 @@ export abstract class Projectile implements Indexable {
   public markAsUnexpired(): void {
     this.expired = false;
   }
+
+  public getDamage(): number {
+    return this.damage;
+  }
 }

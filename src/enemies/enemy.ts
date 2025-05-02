@@ -1,6 +1,8 @@
 import { Vector2, Box2 } from "threejs-math";
 import { Camera2D } from "../camera";
 import { Indexable, NodeGeometry, Rectangle } from "@timohausmann/quadtree-ts";
+import { Alive } from "../alive.abstract";
+import { Hostile } from "../hostile.abstract";
 import { Entity } from "../entity.abstract";
 
 export enum EnemyType {
@@ -12,7 +14,10 @@ export enum EnemyType {
   MaxEnemy,
 }
 
-export abstract class Enemy extends Entity implements Indexable {
+export abstract class Enemy
+  extends Entity
+  implements Indexable, Alive, Hostile
+{
   public animationSpeed: number = 500;
   public elapsedAnimationTime: number;
   public speed: number = 50;
@@ -21,9 +26,28 @@ export abstract class Enemy extends Entity implements Indexable {
   public position: Vector2 = new Vector2(0, 0);
   public hitBox: Box2 = new Box2(new Vector2(0, 0), new Vector2(0, 0));
 
+  abstract damage: number;
+  abstract health: number;
+
   constructor() {
     super();
     this.elapsedAnimationTime = 0;
+  }
+
+  // From Alive interface
+  public getHealth(): number {
+    return this.health;
+  }
+
+  public takeDamage(amount: number): void {
+    this.health -= amount;
+    if (this.health < 0) {
+      this.health = 0;
+    }
+  }
+
+  public isAlive(): boolean {
+    return this.health > 0;
   }
 
   qtIndex(node: NodeGeometry): number[] {
@@ -72,5 +96,9 @@ export abstract class Enemy extends Entity implements Indexable {
       this.hitboxSize.y,
       Color.new(255, 0, 0, 128)
     );
+  }
+
+  public applyDamage(target: Alive): void {
+    target.takeDamage(this.damage);
   }
 }

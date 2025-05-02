@@ -4,6 +4,8 @@ import { Enemy } from "./enemy";
 export class Ghost extends Enemy {
   public readonly tileSize: Vector2 = new Vector2(64, 64);
   public readonly hitboxSize: Vector2 = new Vector2(28, 35);
+  public damage: number = 5;
+  public health: number = 7;
 
   constructor(x: number, y: number) {
     super();

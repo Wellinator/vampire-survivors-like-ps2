@@ -3,12 +3,13 @@ import { g_Pad } from "./pad";
 import TextureManager from "./texture_manager";
 import { Camera2D } from "./camera";
 import { Rectangle, Indexable, NodeGeometry } from "@timohausmann/quadtree-ts";
+import { Alive } from "./alive.abstract";
 import { Entity } from "./entity.abstract";
 
-export class Player extends Entity implements Indexable {
+export class Player extends Entity implements Indexable, Alive {
   public readonly hitboxSize: Vector2 = new Vector2(20, 32);
   public readonly tileSize: Vector2 = new Vector2(32, 32);
-
+  public health: number = 100;
   public texture_atlas!: Image;
 
   hitBox: Box2 = new Box2(new Vector2(0, 0), new Vector2(0, 0));
@@ -135,5 +136,21 @@ export class Player extends Entity implements Indexable {
 
   setRunning() {
     this._isMooving = true;
+  }
+
+  // Implements from Alive interface
+  public getHealth(): number {
+    return this.health;
+  }
+
+  public takeDamage(amount: number): void {
+    this.health -= amount;
+    if (this.health < 0) {
+      this.health = 0;
+    }
+  }
+
+  public isAlive(): boolean {
+    return this.health > 0;
   }
 }

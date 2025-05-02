@@ -22,7 +22,7 @@ export class GameplayState extends GameState {
   private weaponsController: WeaponController = new WeaponController();
   private collisionSystem: CollisionController;
   private spawnEnemiesInterval: any;
-  private readonly max_enemies = 100;
+  private readonly max_enemies = 5;
 
   constructor() {
     super();
@@ -84,8 +84,11 @@ export class GameplayState extends GameState {
           .forEach((collidable: Collidable) => {
             const enemy = collidable as Enemy;
             if (enemy.hitBox.intersectsBox(projectile.aabb)) {
-              // TODO: implement apply damage to alive entity
               this.weaponsController.removeProjectile(projectile);
+
+              if (enemy.isAlive())
+                return enemy.takeDamage(projectile.getDamage());
+
               this.enemiesController.removeEnemy(enemy);
             }
           });
@@ -99,8 +102,7 @@ export class GameplayState extends GameState {
         const enemy = collidable as Enemy;
         // Narrow phase
         if (enemy.hitBox.intersectsBox(this.player.hitBox))
-          // TODO: implement apply damage to alive entity
-          this.enemiesController.removeEnemy(enemy);
+          if (this.player.isAlive()) this.player.takeDamage(enemy.damage);
       });
 
     // Make cam  follow the player
