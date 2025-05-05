@@ -2,6 +2,7 @@ import { Vector2 } from "threejs-math";
 import { Camera2D } from "../camera";
 import TextureManager from "../texture_manager";
 import { Level } from "./level.abstract";
+import { AudioController } from "../controllers/audio.controller";
 
 export class Level1 extends Level {
   public levelName: string;
@@ -9,6 +10,9 @@ export class Level1 extends Level {
   public levelWidth: number;
   public levelHeight: number;
   public levelBackgroundTexId: number = 0;
+
+  private audioController: AudioController;
+  private song: Audio = 0;
 
   constructor() {
     super();
@@ -26,6 +30,13 @@ export class Level1 extends Level {
     );
     backGround.width = this.levelWidth;
     backGround.height = this.levelHeight;
+
+    this.audioController = AudioController.getInstance();
+    this.audioController.repeat(true);
+    this.song = this.audioController.loadMusic(
+      "./assets/audio/music/kim-lightyear-legends.wav"
+    );
+    this.audioController.playMusic(this.song);
   }
 
   public render(): void {
