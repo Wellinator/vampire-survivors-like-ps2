@@ -14,19 +14,30 @@ import { WeaponController } from "../controllers/weapon.controller";
 import { BaseballBat } from "../weapons/bat";
 import { Weapon } from "../weapons/weapon.abstract";
 import { Projectile } from "../projectile/projectile.abstract";
+import { CollectableController } from "../controllers/collectable.controller";
+import { CollidableType } from "../constants";
+import {
+  Collectable,
+  CollectableType,
+} from "../collectables/collectable.abstract";
+import { Vector2 } from "threejs-math";
 
 export class GameplayState extends GameState {
   public player: Player; // Replace with actual player type
   private level: Level = new Level1();
-  private enemiesController: EnemyController = new EnemyController();
-  private weaponsController: WeaponController = new WeaponController();
-  private collisionSystem: CollisionController;
+  private enemiesController: EnemyController;
+  private weaponsController: WeaponController;
+  private collectableController: CollectableController;
   private spawnEnemiesInterval: any;
   private readonly max_enemies = 5;
 
   constructor() {
     super();
-    this.collisionSystem = CollisionController.getInstance();
+
+    this.enemiesController = new EnemyController();
+    this.weaponsController = new WeaponController();
+    this.collectableController = new CollectableController();
+
     this.player = new Player();
 
     this.weaponsController.registerWeapon(new BaseballBat());
@@ -63,15 +74,15 @@ export class GameplayState extends GameState {
     this.player.update(deltaTime);
     this.enemiesController.update(deltaTime);
     this.weaponsController.update(deltaTime);
+    this.collectableController.update(deltaTime);
     this.level.update(deltaTime);
   }
 
   fixedUpdate(fixedDeltaTime: number): void {
-    this.collisionSystem.reset();
-
     this.player.fixedUpdate(fixedDeltaTime);
     this.enemiesController.fixedUpdate(fixedDeltaTime, this.player);
     this.weaponsController.fixedUpdate(fixedDeltaTime);
+    this.collectableController.fixedUpdate(fixedDeltaTime);
 
     // Check collisions
 
@@ -79,16 +90,23 @@ export class GameplayState extends GameState {
     this.weaponsController
       .getProjectiles()
       .forEach((projectile: Projectile) => {
-        this.collisionSystem
-          .query(projectile)
-          .forEach((collidable: Collidable) => {
-            const enemy = collidable as Enemy;
+        this.enemiesController
+          .intersects(projectile)
+          .forEach((enemy: Enemy) => {
             if (enemy.hitBox.intersectsBox(projectile.aabb)) {
               this.weaponsController.removeProjectile(projectile);
 
               if (enemy.isAlive()) {
                 enemy.takeDamage(projectile.getDamage());
-                if (!enemy.isAlive()) this.enemiesController.removeEnemy(enemy);
+                if (!enemy.isAlive()) {
+                  const removed = this.enemiesController.remove(enemy);
+                  if (removed) {
+                    this.collectableController.add(
+                      CollectableType.Xp,
+                      enemy.position.clone()
+                    );
+                  }
+                }
               }
             }
           });
@@ -96,13 +114,22 @@ export class GameplayState extends GameState {
 
     // Player VS Enemies
     // Broad phase
-    this.collisionSystem
-      .query(this.player)
-      .forEach((collidable: Collidable) => {
-        const enemy = collidable as Enemy;
-        // Narrow phase
-        if (enemy.hitBox.intersectsBox(this.player.hitBox))
-          if (this.player.isAlive()) this.player.takeDamage(enemy.damage);
+    this.enemiesController.intersects(this.player).forEach((enemy: Enemy) => {
+      // Narrow phase
+      if (enemy.hitBox.intersectsBox(this.player.hitBox))
+        if (this.player.isAlive()) this.player.takeDamage(enemy.damage);
+    });
+
+    // Player VS Collectables
+    // Broad phase
+    this.collectableController
+      .intersects(this.player)
+      .forEach((collectable: Collectable) => {
+        if (collectable.aabb.intersectsBox(this.player.hitBox)) {
+          collectable.onCollect(this.player);
+          collectable.collected = true;
+          this.collectableController.remove(collectable.id);
+        }
       });
 
     // Make cam  follow the player
@@ -115,6 +142,7 @@ export class GameplayState extends GameState {
     this.level.render();
     this.player.render();
     this.player.renderHP();
+    this.collectableController.render();
     this.enemiesController.render();
     this.weaponsController.render();
   }

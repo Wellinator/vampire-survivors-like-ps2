@@ -6,13 +6,17 @@ import { Rectangle, Indexable, NodeGeometry } from "@timohausmann/quadtree-ts";
 import { Alive } from "./alive.abstract";
 import { Entity } from "./entity.abstract";
 import { GameTimer } from "./timer";
+import { Collidable } from "./controllers/collision.controller";
+import { CollidableType } from "./constants";
 
-export class Player extends Entity implements Indexable, Alive {
+export class Player extends Entity implements Collidable, Alive {
   public readonly hitboxSize: Vector2 = new Vector2(20, 32);
   public readonly tileSize: Vector2 = new Vector2(32, 32);
   public health: number = 100;
   public maxHealth = 100;
   public texture_atlas!: Image;
+  public collidable_type = CollidableType.Player;
+  private xp: number = 0;
 
   hitBox: Box2 = new Box2(new Vector2(0, 0), new Vector2(0, 0));
 
@@ -193,5 +197,9 @@ export class Player extends Entity implements Indexable, Alive {
 
   public isAlive(): boolean {
     return this.health > 0;
+  }
+
+  public onCollectXp(experienceAmount: number): void {
+    this.xp += experienceAmount;
   }
 }

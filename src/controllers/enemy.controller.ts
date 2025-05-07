@@ -9,14 +9,14 @@ import { Camera2D } from "../camera";
 import { SCREEN_VECTOR } from "../scripts/init/init-screen";
 import TextureManager from "../texture_manager";
 import { Player } from "../player";
-import { CollisionController } from "./collision.controller";
+import { Collidable, CollisionController } from "./collision.controller";
 import { randInt } from "../mathutils.js";
 import { Rectangle } from "@timohausmann/quadtree-ts";
 
-export class EnemyController {
+export class EnemyController extends CollisionController<Enemy> {
   private id_counter: number = 1;
   private enemies: Enemy[] = [];
-  private collisionSystem: CollisionController;
+
   private TextureRepository = {
     Clown: 0,
     DemonDoor: 0,
@@ -26,8 +26,7 @@ export class EnemyController {
   };
 
   constructor() {
-    this.collisionSystem =
-      CollisionController.getInstance<CollisionController>();
+    super();
     this.registerTextures();
   }
 
@@ -98,11 +97,15 @@ export class EnemyController {
     return newEnemy;
   }
 
-  removeEnemy(enemy: Enemy): void {
+  remove(enemy: Enemy): boolean {
     const i = this.enemies.findIndex((e) => e.id === enemy.id);
     if (i > -1) {
+      // Drop XP orb. TODO: check probability and xp value
       this.enemies.splice(i, 1);
+      return true;
     }
+
+    return false;
   }
 
   update(deltaTime: number): void {
@@ -112,10 +115,14 @@ export class EnemyController {
   }
 
   fixedUpdate(fixedDeltaTime: number, player: Player): void {
+    this.clear();
+
     for (let i = 0; i < this.enemies.length; i++) {
       this.enemies[i].setDirection(player.position);
       this.enemies[i].fixedUpdate(fixedDeltaTime);
-      this.collisionSystem.insert(this.enemies[i]);
+
+      // console.log("enemy id: ", i);
+      this.insert(this.enemies[i]);
     }
   }
 
@@ -128,7 +135,7 @@ export class EnemyController {
       height: screenBox2.max.y - screenBox2.min.y,
     });
 
-    this.collisionSystem.query(query).forEach((collidable) => {
+    this.intersects(query).forEach((collidable) => {
       const enemy = collidable as Enemy;
       const shouldFlipX = enemy.direction.x == -1;
       const currentTileX = enemy.tileIndex * enemy.tileSize.x;

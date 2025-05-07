@@ -1,19 +1,17 @@
-import { Singleton } from "../abstract/singleton";
 import {
   Circle,
+  Indexable,
   Line,
   Quadtree,
   Rectangle,
-  Indexable,
 } from "@timohausmann/quadtree-ts";
 
-export type Collidable = Rectangle | Circle | Line | Indexable;
+export type Collidable = Indexable | Rectangle | Circle | Line;
 
-export class CollisionController extends Singleton {
-  private quadTree: Quadtree<any>;
+export abstract class CollisionController<T extends Indexable> {
+  protected quadTree: Quadtree<T>;
 
   constructor() {
-    super();
     this.quadTree = new Quadtree({
       width: 2000,
       height: 2000,
@@ -21,15 +19,15 @@ export class CollisionController extends Singleton {
     });
   }
 
-  public insert(object: Collidable) {
+  protected insert(object: T) {
     this.quadTree.insert(object);
   }
 
-  public reset(): void {
+  protected clear(): void {
     this.quadTree.clear();
   }
 
-  public query(query: Collidable): Array<Collidable> {
+  public intersects(query: Collidable): Array<T> {
     return this.quadTree.retrieve(query);
   }
 }

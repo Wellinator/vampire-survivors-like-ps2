@@ -5,6 +5,8 @@ import { Alive } from "../alive.abstract";
 import { Hostile } from "../hostile.abstract";
 import { Entity } from "../entity.abstract";
 import { GameTimer } from "../timer";
+import { Collidable } from "../controllers/collision.controller";
+import { CollidableType } from "../constants";
 
 export enum EnemyType {
   Clown,
@@ -17,8 +19,9 @@ export enum EnemyType {
 
 export abstract class Enemy
   extends Entity
-  implements Indexable, Alive, Hostile
+  implements Collidable, Alive, Hostile
 {
+  public collidable_type: CollidableType = CollidableType.Enemy;
   public animationSpeed: number = 500;
   public elapsedAnimationTime: number;
   public speed: number = 50;
@@ -60,9 +63,7 @@ export abstract class Enemy
   }
 
   qtIndex(node: NodeGeometry): number[] {
-    // The Box should act like a Rectangle
-    // so we just call qtIndex on the Rectangle prototype
-    // and map the position and size vectors to x, y, width and height
+    // console.log("Enemy: ", JSON.stringify(this, null, 4));
     return Rectangle.prototype.qtIndex.call(
       {
         x: this.position.x,

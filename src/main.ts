@@ -3,7 +3,7 @@
 import { g_Pad } from "./pad";
 import { font } from "./scripts/init/init-font";
 import { SetupRender } from "./scripts/init/init-render";
-import { SetupScreen } from "./scripts/init/init-screen";
+import { SCREEN_VECTOR, SetupScreen } from "./scripts/init/init-screen";
 import { GameplayState } from "./states/state_gameplay";
 import { FrameLimits, GameTimer } from "./timer";
 
@@ -48,6 +48,12 @@ os.setInterval(() => {
       font.print(5, 45, `update: ${gameTimer.UpdateTime.toFixed(2)}ms`);
       font.print(5, 65, `Objects: ${gameState.objectsCount}`);
       font.print(5, 85, `Projectiles: ${gameState.projectilesCount}`);
+
+      font.print(
+        5,
+        SCREEN_VECTOR.y - 25,
+        `RAM: ${(System.getMemoryStats().used / 1000 / 1000).toFixed(4)} / 32.000`
+      );
 
       Screen.flip();
     }
