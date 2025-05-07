@@ -8,6 +8,8 @@ import { Entity } from "./entity.abstract";
 import { GameTimer } from "./timer";
 import { Collidable } from "./controllers/collision.controller";
 import { CollidableType } from "./constants";
+import { SCREEN_VECTOR } from "./scripts/init/init-screen";
+import { font } from "./scripts/init/init-font";
 
 export class Player extends Entity implements Collidable, Alive {
   public readonly hitboxSize: Vector2 = new Vector2(20, 32);
@@ -16,7 +18,10 @@ export class Player extends Entity implements Collidable, Alive {
   public maxHealth = 100;
   public texture_atlas!: Image;
   public collidable_type = CollidableType.Player;
-  private xp: number = 0;
+
+  // TODO: implement levelup service
+  private XP: number = 0;
+  private maxXP: number = 1000;
 
   hitBox: Box2 = new Box2(new Vector2(0, 0), new Vector2(0, 0));
 
@@ -143,6 +148,44 @@ export class Player extends Entity implements Collidable, Alive {
     );
   }
 
+  renderXP() {
+    const position = new Vector2(0, SCREEN_VECTOR.y - 10);
+    const size = new Vector2(SCREEN_VECTOR.x, 10);
+
+    // XP border
+    const borderPos = position.clone();
+    Draw.rect(
+      borderPos.x,
+      borderPos.y,
+      size.x,
+      size.y,
+      Color.new(120, 120, 120, 128)
+    );
+
+    // XP
+    const offset = new Vector2(4, 4);
+    const xpPos = position.clone().add(offset.clone().divideScalar(2));
+    const xpWidth = size.x * (this.XP / this.maxXP) - offset.x;
+    Draw.rect(
+      xpPos.x,
+      xpPos.y,
+      xpWidth,
+      size.y - offset.y,
+      Color.new(255, 230, 0, 128)
+    );
+
+    const oldColor = font.color;
+    const oldScale = font.scale;
+
+    const xpColor = Color.new(0.0, 0.0, 0.0, 128);
+    font.color = xpColor;
+    font.scale = 0.45;
+    font.print(5, SCREEN_VECTOR.y - 9, `XP: ${this.XP} / ${this.maxXP}`);
+
+    font.color = oldColor;
+    font.scale = oldScale;
+  }
+
   renderHitBox() {
     const pos = Camera2D.toScreenSpace(this.hitBox.min.clone()); // Convert to screen space
     Draw.rect(
@@ -200,6 +243,6 @@ export class Player extends Entity implements Collidable, Alive {
   }
 
   public onCollectXp(experienceAmount: number): void {
-    this.xp += experienceAmount;
+    this.XP += experienceAmount;
   }
 }

@@ -141,10 +141,13 @@ export class GameplayState extends GameState {
   render(): void {
     this.level.render();
     this.player.render();
-    this.player.renderHP();
     this.collectableController.render();
     this.enemiesController.render();
     this.weaponsController.render();
+
+    // TODO: move to HUD
+    this.player.renderHP();
+    this.player.renderXP();
   }
 
   // TODO: spawn types and quantity by elapsed time
