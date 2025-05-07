@@ -4,23 +4,18 @@ import { GameState } from "./game_state.abstract";
 import { EnemyController } from "../controllers/enemy.controller";
 import { Level1 } from "../levels/level-1";
 import { Level } from "../levels/level.abstract";
-import {
-  Collidable,
-  CollisionController,
-} from "../controllers/collision.controller";
-
 import { Enemy, EnemyType } from "../enemies/enemy";
 import { WeaponController } from "../controllers/weapon.controller";
 import { BaseballBat } from "../weapons/bat";
 import { Weapon } from "../weapons/weapon.abstract";
 import { Projectile } from "../projectile/projectile.abstract";
 import { CollectableController } from "../controllers/collectable.controller";
-import { CollidableType } from "../constants";
 import {
   Collectable,
   CollectableType,
 } from "../collectables/collectable.abstract";
 import { Vector2 } from "threejs-math";
+import { Circle } from "@timohausmann/quadtree-ts";
 
 export class GameplayState extends GameState {
   public player: Player; // Replace with actual player type
@@ -122,10 +117,35 @@ export class GameplayState extends GameState {
 
     // Player VS Collectables
     // Broad phase
+    const circleQuery = new Circle({
+      r: this.player.magnetOrbRange,
+      x: this.player.position.x,
+      y: this.player.position.y,
+    });
+
+    // Braod phase
     this.collectableController
-      .intersects(this.player)
+      .intersects(circleQuery)
       .forEach((collectable: Collectable) => {
-        if (collectable.aabb.intersectsBox(this.player.hitBox)) {
+        // Narrow phase
+        // Update collectable position by magnetism
+        collectable.setDirectionFromTarget(this.player.position);
+
+        if (!collectable.attracting) {
+          const collide = this.player.hitBox
+            .clone()
+            .expandByScalar(this.player.magnetOrbRange)
+            .intersectsBox(collectable.aabb);
+
+          if (collide) {
+            const lift = new Vector2(-5, -5);
+            collectable.velocity.copy(lift);
+            collectable.attracting = true;
+          }
+        }
+
+        // If collides to player, collect it;
+        if (collectable.getExpandedAABB().intersectsBox(this.player.hitBox)) {
           collectable.onCollect(this.player);
           collectable.collected = true;
           this.collectableController.remove(collectable.id);

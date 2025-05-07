@@ -23,6 +23,9 @@ export class Player extends Entity implements Collidable, Alive {
   private XP: number = 0;
   private maxXP: number = 1000;
 
+  private magnetOrbMultiplyer = 1.0;
+  private readonly magnetOrb = 32; //Value in pixels
+
   hitBox: Box2 = new Box2(new Vector2(0, 0), new Vector2(0, 0));
 
   _isMooving: boolean = false;
@@ -244,5 +247,9 @@ export class Player extends Entity implements Collidable, Alive {
 
   public onCollectXp(experienceAmount: number): void {
     this.XP += experienceAmount;
+  }
+
+  public get magnetOrbRange(): number {
+    return this.magnetOrb * this.magnetOrbMultiplyer;
   }
 }

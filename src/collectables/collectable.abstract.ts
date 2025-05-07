@@ -15,17 +15,28 @@ export abstract class Collectable implements Collidable {
 
   protected type!: CollectableType;
   protected speed!: number;
+  protected maxVelocity: number = 10.0;
 
   public id: number = -1;
   public textureId: number = -1;
   public collected: boolean = false;
+  public attracting: boolean = false;
   public collidable_type: CollidableType = CollidableType.Collectable;
+  public velocity: Vector2 = new Vector2(0, 0);
   public direction: Vector2 = new Vector2(0, 0);
   public position: Vector2 = new Vector2(0, 0);
 
   abstract update(deltaTime: number): void;
   abstract fixedUpdate(fixedDeltaTime: number): void;
   abstract onCollect(player: Player): void;
+
+  public setDirectionFromTarget(target: Vector2): void {
+    this.direction.copy(target.clone().sub(this.position).normalize());
+  }
+
+  getExpandedAABB(): Box2 {
+    return this.aabb.clone().expandByVector(this.velocity);
+  }
 
   qtIndex(node: NodeGeometry): number[] {
     return Rectangle.prototype.qtIndex.call(

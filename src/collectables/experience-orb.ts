@@ -9,7 +9,7 @@ export class ExperienceOrb extends Collectable {
 
   constructor(position: Vector2) {
     super();
-    this.speed = 5.0;
+    this.speed = 10.0;
     this.type = CollectableType.Xp;
     this.position.copy(position);
     this.aabb.setFromCenterAndSize(this.position, this.size);
@@ -18,8 +18,12 @@ export class ExperienceOrb extends Collectable {
   update(deltaTime: number): void {}
 
   fixedUpdate(fixedDeltaTime: number): void {
-    const velocity = (this.speed * fixedDeltaTime) / 1000;
-    this.position.add(this.direction.clone().multiplyScalar(velocity));
+    if (this.attracting) {
+      this.velocity
+        .addScalar((this.speed * fixedDeltaTime) / 1000)
+        .clampScalar(-this.maxVelocity, this.maxVelocity);
+      this.position.add(this.direction.clone().multiply(this.velocity));
+    }
     this.aabb.setFromCenterAndSize(this.position, this.size);
   }
 
