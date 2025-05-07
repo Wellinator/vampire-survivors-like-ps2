@@ -120,8 +120,6 @@ export class EnemyController extends CollisionController<Enemy> {
     for (let i = 0; i < this.enemies.length; i++) {
       this.enemies[i].setDirection(player.position);
       this.enemies[i].fixedUpdate(fixedDeltaTime);
-
-      // console.log("enemy id: ", i);
       this.insert(this.enemies[i]);
     }
   }

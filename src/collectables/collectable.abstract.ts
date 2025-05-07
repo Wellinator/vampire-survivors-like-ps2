@@ -28,7 +28,6 @@ export abstract class Collectable implements Collidable {
   abstract onCollect(player: Player): void;
 
   qtIndex(node: NodeGeometry): number[] {
-    // console.log("XP: ", JSON.stringify(this, null, 4));
     return Rectangle.prototype.qtIndex.call(
       {
         x: this.position.x - this.size.x / 2,

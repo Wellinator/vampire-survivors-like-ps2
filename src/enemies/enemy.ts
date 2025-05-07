@@ -63,7 +63,6 @@ export abstract class Enemy
   }
 
   qtIndex(node: NodeGeometry): number[] {
-    // console.log("Enemy: ", JSON.stringify(this, null, 4));
     return Rectangle.prototype.qtIndex.call(
       {
         x: this.position.x,

@@ -79,8 +79,6 @@ export class CollectableController extends CollisionController<Collectable> {
   }
 
   render(): void {
-    console.log(this.TextureRepository.Coin);
-
     for (let i = 0; i < this.collectables.length; i++) {
       const collectable = this.collectables[i];
       if (collectable.collected == true) continue;
