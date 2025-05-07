@@ -13,8 +13,10 @@ export abstract class CollisionController<T extends Indexable> {
 
   constructor() {
     this.quadTree = new Quadtree({
-      width: 2000,
-      height: 2000,
+      width: 5000,
+      height: 5000,
+      x: -2500,
+      y: -2500,
       maxObjects: 4,
     });
   }
