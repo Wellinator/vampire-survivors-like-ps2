@@ -11,15 +11,15 @@ export class BaseballBat extends Weapon {
 
   constructor() {
     const name = "Ball";
-    const cooldown = 2000.0;
+    const cooldown = 1500.0;
     const damage = 10.0;
     const range = 1.0;
-    const speed = 50.0;
+    const speed = 60.0;
 
     super(name, damage, cooldown, range, speed);
     this.type = Weapons.BaseballBat;
     this.registerTextures();
-  }
+  } 
 
   registerTextures(): void {
     const textureManager = TextureManager.getInstance();
