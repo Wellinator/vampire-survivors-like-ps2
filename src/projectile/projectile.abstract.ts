@@ -1,13 +1,12 @@
 import { Indexable, NodeGeometry } from "@timohausmann/quadtree-ts";
 import { Vector2, Box2 } from "threejs-math";
-import { Collidable } from "../controllers/collision.controller";
 import { CollidableType } from "../constants";
 
 export enum Projectiles {
   Ball,
 }
 
-export abstract class Projectile implements Collidable {
+export abstract class Projectile implements Indexable {
   public textureId: number = -1;
 
   abstract readonly tileSize: Vector2;

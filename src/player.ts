@@ -11,7 +11,7 @@ import { CollidableType } from "./constants";
 import { SCREEN_VECTOR } from "./scripts/init/init-screen";
 import { font } from "./scripts/init/init-font";
 
-export class Player extends Entity implements Collidable, Alive {
+export class Player extends Entity implements Indexable, Alive {
   public readonly hitboxSize: Vector2 = new Vector2(20, 32);
   public readonly tileSize: Vector2 = new Vector2(32, 32);
   public health: number = 100;

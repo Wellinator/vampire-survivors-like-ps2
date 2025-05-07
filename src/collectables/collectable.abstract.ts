@@ -1,6 +1,5 @@
-import { NodeGeometry, Rectangle } from "@timohausmann/quadtree-ts";
+import { Indexable, NodeGeometry, Rectangle } from "@timohausmann/quadtree-ts";
 import { Box2, Vector2 } from "threejs-math";
-import { Collidable } from "../controllers/collision.controller";
 import { CollidableType } from "../constants";
 import { Player } from "../player";
 
@@ -8,7 +7,7 @@ export enum CollectableType {
   Xp,
 }
 
-export abstract class Collectable implements Collidable {
+export abstract class Collectable implements Indexable {
   abstract readonly size: Vector2;
   abstract readonly tileSize: Vector2;
   abstract aabb: Box2;

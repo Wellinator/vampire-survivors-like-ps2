@@ -5,7 +5,6 @@ import { Alive } from "../alive.abstract";
 import { Hostile } from "../hostile.abstract";
 import { Entity } from "../entity.abstract";
 import { GameTimer } from "../timer";
-import { Collidable } from "../controllers/collision.controller";
 import { CollidableType } from "../constants";
 
 export enum EnemyType {
@@ -19,7 +18,7 @@ export enum EnemyType {
 
 export abstract class Enemy
   extends Entity
-  implements Collidable, Alive, Hostile
+  implements Indexable, Alive, Hostile
 {
   public collidable_type: CollidableType = CollidableType.Enemy;
   public animationSpeed: number = 500;
