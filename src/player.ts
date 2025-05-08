@@ -6,10 +6,10 @@ import { Rectangle, Indexable, NodeGeometry } from "@timohausmann/quadtree-ts";
 import { Alive } from "./alive.abstract";
 import { Entity } from "./entity.abstract";
 import { GameTimer } from "./timer";
-import { Collidable } from "./controllers/collision.controller";
 import { CollidableType } from "./constants";
 import { SCREEN_VECTOR } from "./scripts/init/init-screen";
 import { font } from "./scripts/init/init-font";
+import { LevelUp } from "./services/level-up.service";
 
 export class Player extends Entity implements Indexable, Alive {
   public readonly hitboxSize: Vector2 = new Vector2(20, 32);
@@ -19,9 +19,13 @@ export class Player extends Entity implements Indexable, Alive {
   public texture_atlas!: Image;
   public collidable_type = CollidableType.Player;
 
-  // TODO: implement levelup service
-  private XP: number = 0;
-  private maxXP: number = 1000;
+  // Callbacks
+  public onLeveUp!: () => void;
+
+  // XP and Level props
+  public level: number = 1;
+  public XP: number = 0;
+  public xpToNextLevel: number = 100;
 
   private magnetOrbMultiplyer = 1.0;
   private readonly magnetOrb = 32; //Value in pixels
@@ -168,7 +172,7 @@ export class Player extends Entity implements Indexable, Alive {
     // XP
     const offset = new Vector2(4, 4);
     const xpPos = position.clone().add(offset.clone().divideScalar(2));
-    const xpWidth = size.x * (this.XP / this.maxXP) - offset.x;
+    const xpWidth = size.x * (this.XP / this.xpToNextLevel) - offset.x;
     Draw.rect(
       xpPos.x,
       xpPos.y,
@@ -179,11 +183,23 @@ export class Player extends Entity implements Indexable, Alive {
 
     const oldColor = font.color;
     const oldScale = font.scale;
-
     const xpColor = Color.new(0.0, 0.0, 0.0, 128);
     font.color = xpColor;
     font.scale = 0.45;
-    font.print(5, SCREEN_VECTOR.y - 9, `XP: ${this.XP} / ${this.maxXP}`);
+
+    // Render XP
+    font.print(
+      5,
+      SCREEN_VECTOR.y - 9,
+      `XP: ${this.XP} / ${this.xpToNextLevel}`
+    );
+
+    // Render Level
+    font.print(
+      SCREEN_VECTOR.x - 100,
+      SCREEN_VECTOR.y - 9,
+      `Lvl:  ${this.level}`
+    );
 
     font.color = oldColor;
     font.scale = oldScale;
@@ -247,6 +263,10 @@ export class Player extends Entity implements Indexable, Alive {
 
   public onCollectXp(experienceAmount: number): void {
     this.XP += experienceAmount;
+    if (this.XP >= this.xpToNextLevel) {
+      LevelUp.LevelUp(this);
+      if (this.onLeveUp) this.onLeveUp();
+    }
   }
 
   public get magnetOrbRange(): number {

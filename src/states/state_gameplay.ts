@@ -34,6 +34,10 @@ export class GameplayState extends GameState {
     this.collectableController = new CollectableController();
 
     this.player = new Player();
+    this.player.onLeveUp = () => {
+      // TODO: open weapons upgrade menu
+      console.log("Level up! lvl: ", this.player.level);
+    };
 
     this.weaponsController.registerWeapon(new BaseballBat());
     this.weaponsController.onWeaponRady = (weapon: Weapon) => {
