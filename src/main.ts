@@ -1,4 +1,5 @@
-// {"name": "Athena develop environment", "author": "Wellinator", "version": "04072023", "icon": "render_icon.png", "file": "3dcollision.js"}
+/*! use float32; */
+// {"name": "Athena develop environment", "author": "Wellinator", "version": "04072023", "icon": "render_icon.png", "file": "main.js"}
 
 import { g_Pad } from "./pad";
 import { font } from "./scripts/init/init-font";
@@ -52,7 +53,9 @@ os.setInterval(() => {
       font.print(
         5,
         SCREEN_VECTOR.y - 25,
-        `RAM: ${(System.getMemoryStats().used / 1000 / 1000).toFixed(4)} / 32.000`
+        `RAM: ${(System.getMemoryStats().used / 1000 / 1000).toFixed(
+          4
+        )} / 32.000`
       );
 
       Screen.flip();
