@@ -97,7 +97,8 @@ export abstract class Enemy
     }
 
     const velocity = (this.speed * fixedDeltaTime) / 1000;
-    this.position_end.add(this.direction.clone().multiplyScalar(velocity));
+    this.velocity.addScalar(velocity).clampScalar(-velocity, velocity);
+    this.position_end.add(this.direction.clone().multiply(this.velocity));
 
     // Update hitBox by new position
     this.hitBox.setFromCenterAndSize(this.position_end, this.hitboxSize);

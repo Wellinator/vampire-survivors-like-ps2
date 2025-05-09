@@ -79,7 +79,11 @@ export class GameplayState extends GameState {
 
   fixedUpdate(fixedDeltaTime: number): void {
     this.player.fixedUpdate(fixedDeltaTime);
-    this.enemiesController.fixedUpdate(fixedDeltaTime, this.player);
+    this.enemiesController.fixedUpdate(
+      fixedDeltaTime,
+      this.player,
+      this.collectableController
+    );
     this.weaponsController.fixedUpdate(fixedDeltaTime);
     this.collectableController.fixedUpdate(fixedDeltaTime);
 
@@ -97,15 +101,7 @@ export class GameplayState extends GameState {
 
               if (enemy.isAlive()) {
                 enemy.takeDamage(projectile.getDamage());
-                if (!enemy.isAlive()) {
-                  const removed = this.enemiesController.remove(enemy);
-                  if (removed) {
-                    this.collectableController.add(
-                      CollectableType.Xp,
-                      enemy.position.clone()
-                    );
-                  }
-                }
+                enemy.velocity.add(projectile.getImpact());
               }
             }
           });

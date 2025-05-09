@@ -12,6 +12,8 @@ import { Player } from "../player";
 import { Collidable, CollisionController } from "./collision.controller";
 import { randInt } from "../mathutils.js";
 import { Rectangle } from "@timohausmann/quadtree-ts";
+import { CollectableController } from "./collectable.controller";
+import { CollectableType } from "../collectables/collectable.abstract";
 
 export class EnemyController extends CollisionController<Enemy> {
   private id_counter: number = 1;
@@ -114,14 +116,28 @@ export class EnemyController extends CollisionController<Enemy> {
     }
   }
 
-  fixedUpdate(fixedDeltaTime: number, player: Player): void {
+  fixedUpdate(
+    fixedDeltaTime: number,
+    player: Player,
+    collectableController: CollectableController
+  ): void {
     this.clear();
-
+    const deadEnemies = [];
     for (let i = 0; i < this.enemies.length; i++) {
+      if (this.enemies[i].isAlive() == false) {
+        deadEnemies.push(this.enemies[i]);
+        continue;
+      }
+
       this.enemies[i].setDirection(player.position);
       this.enemies[i].fixedUpdate(fixedDeltaTime);
       this.insert(this.enemies[i]);
     }
+
+    deadEnemies.forEach((enemy) => {
+      collectableController.add(CollectableType.Xp, enemy.position.clone());
+      this.remove(enemy);
+    });
   }
 
   render(): void {

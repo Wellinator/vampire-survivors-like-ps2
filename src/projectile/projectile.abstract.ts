@@ -49,4 +49,8 @@ export abstract class Projectile implements Indexable {
   public getDamage(): number {
     return this.damage;
   }
+
+  public getImpact(): Vector2 {
+    return new Vector2(-25, -25);
+  }
 }
