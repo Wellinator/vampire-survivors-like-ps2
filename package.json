@@ -9,7 +9,8 @@
     "run-pcsx2": "powershell.exe -noprofile -ExecutionPolicy Bypass -NoExit -File \"run.ps1\" -NoNewWindow",
     "build-and-run": "npm run build & npm run run-pcsx2",
     "start": "nodemon --exec \"npm run build-and-run\"",
-    "watch": "nodemon --exec \"npm run build\""
+    "watch": "nodemon --exec \"npm run build\"",
+    "prepare": "husky"
   },
   "author": "Wellinator",
   "license": "MIT",
