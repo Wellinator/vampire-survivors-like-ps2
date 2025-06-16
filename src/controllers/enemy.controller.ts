@@ -111,8 +111,9 @@ export class EnemyController extends CollisionController<Enemy> {
   }
 
   update(deltaTime: number): void {
-    for (let i = 0; i < this.enemies.length; i++) {
-      this.enemies[i].update(deltaTime);
+    var len = this.enemies.length;
+    while (len--) {
+      this.enemies[len].update(deltaTime);
     }
   }
 
@@ -123,7 +124,9 @@ export class EnemyController extends CollisionController<Enemy> {
   ): void {
     this.clear();
     const deadEnemies = [];
-    for (let i = 0; i < this.enemies.length; i++) {
+
+    var i = this.enemies.length;
+    while (i--) {
       if (this.enemies[i].isAlive() == false) {
         deadEnemies.push(this.enemies[i]);
         continue;
@@ -134,10 +137,12 @@ export class EnemyController extends CollisionController<Enemy> {
       this.insert(this.enemies[i]);
     }
 
-    deadEnemies.forEach((enemy) => {
+    var j = deadEnemies.length;
+    while (j--) {
+      const enemy = deadEnemies[j];
       collectableController.add(CollectableType.Xp, enemy.position.clone());
       this.remove(enemy);
-    });
+    }
   }
 
   render(): void {

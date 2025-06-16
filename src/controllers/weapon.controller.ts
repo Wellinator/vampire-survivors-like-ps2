@@ -38,13 +38,15 @@ export class WeaponController {
   }
 
   public update(deltaTime: number): void {
-    for (let i = 0; i < this.weapons.length; i++) {
-      this.weapons[i].update(deltaTime);
-      if (this.weapons[i].isReady()) this.onWeaponRady(this.weapons[i]);
+    let len = this.weapons.length;
+    while (len--) {
+      this.weapons[len].update(deltaTime);
+      if (this.weapons[len].isReady()) this.onWeaponRady(this.weapons[len]);
     }
 
-    for (let i = 0; i < this.projectiles.length; i++) {
-      this.projectiles[i].update(deltaTime);
+    len = this.projectiles.length;
+    while (len--) {
+      this.projectiles[len].update(deltaTime);
     }
   }
 
