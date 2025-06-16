@@ -24,7 +24,7 @@ export class GameplayState extends GameState {
   private weaponsController: WeaponController;
   private collectableController: CollectableController;
   private spawnEnemiesInterval: any;
-  private readonly max_enemies = 5;
+  private readonly max_enemies = 50;
 
   constructor() {
     super();
